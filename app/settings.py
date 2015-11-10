@@ -45,10 +45,14 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'debug_toolbar',
     'cachalot',
+    'debug_toolbar',
+    'django_activeurl',
+    'mptt',
     'post_office',
     'taggit',
+
+    'story',
 )
 
 SITE_ID = 1
