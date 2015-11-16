@@ -1,0 +1,148 @@
+<!DOCTYPE html>{% load static account %}
+<html>
+<head>
+      <meta charset="utf-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+      <title>{% block title %}Добро пожаловать{% endblock %} - Quantum Library</title>
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/reset.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/site.css" %}">
+
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/container.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/grid.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/header.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/image.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/menu.css" %}">
+
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/divider.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/dropdown.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/segment.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/button.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/list.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/icon.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/transition.css" %}">
+      
+      <link rel="stylesheet" type="text/css" href="{% static "app/css/style.css" %}">
+</head>
+<body>
+    <div class="ui fixed inverted compact menu">
+        <div class="ui container">
+            <a href="/" class="header item">
+                Quantum Library:
+            </a>
+
+            <a class="item" href="#">
+                <i class="book icon"></i>
+                Читать 
+            </a>
+            <a class="item" href="#">
+                <i class="edit icon"></i>
+                Писать
+            </a>
+            <a class="item" href="#">
+                <i class="plus icon"></i>
+                Добавить
+            </a>
+
+            <div class="right compact menu">
+            {% if not user.is_authenticated %}
+                <a class="item" href="{% url 'account_login' %}">
+                    <i class="sign in icon"></i>
+                    Вход
+                </a>
+                <a class="item" href="{% url 'account_signup' %}">
+                    <i class="add user icon"></i>
+                    Регистрация
+                </a>
+            {% else %}
+                <a class="item" href="#">
+                    <i class="star icon"></i>
+                    Избранное
+                </a>
+                <div class="ui simple dropdown item">
+                    <i class="user icon"></i>
+                    {% user_display user %} 
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="#">
+                            <i class="user icon"></i>
+                            Профиль
+                        </a>
+                        <div class="divider"></div>
+                        <a class="item" href="{% url 'account_change_password' %}">Сменить пароль</a>
+                        <a class="item" href="{% url 'account_email' %}">Сменить email</a>
+                        <div class="divider"></div>
+                        <a class="item" href="{% url 'account_logout' %}">
+                            <i class="sign out icon"></i>
+                            Выход
+                        </a>
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+       </div>
+    </div>
+
+    <div class="ui container" id="main-content">
+        {% if messages %}
+            {% for message in messages %}
+        <div class="ui message{% if message.tags %} {{ message.tags }}{% endif %}">
+            <i class="close icon"></i>
+            <p>{{ message }}</p>
+        </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+    
+    <div class="ui inverted vertical footer segment">
+        <div class="ui container">
+            <div class="ui stackable inverted divided equal height stackable grid">
+                <div class="three wide column">
+                    <h4 class="ui inverted header">О проекте</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">Зачем это все?</a>
+                        <a href="#" class="item">Последние новости</a>
+                        <a href="#" class="item">Часто задаваемые вопросы</a>
+                        <a href="#" class="item">Связаться с нами</a>
+                    </div>
+                </div>
+                <div class="three wide column">
+                    <h4 class="ui inverted header">Внутри</h4>
+                    <div class="ui inverted link list">
+                        <a href="#" class="item">Читать</a>
+                        <a href="#" class="item">Писать</a>
+                    </div>
+                </div>
+                <div class="seven wide column">
+                    <h4 class="ui inverted header">Квантовая библиотека</h4>
+                    <p>
+                        Мы создаем истории внутри историй,<br/>
+                        чтобы Вы могли читать истории пока читаете истории.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static "app/js/jquery.min.js" %}"></script>
+    <script src="{% static "semantic-ui/components/visibility.js" %}"></script>
+    <script src="{% static "semantic-ui/components/transition.js" %}"></script>
+    <script>
+        $(document)
+            .ready(function() {
+                $('.message .close')
+                    .on('click', function() {
+                        $(this)
+                            .closest('.message')
+                            .transition('fade')
+                        ;
+                    })
+                ;
+            })
+        ;
+    </script>
+
+</body>
+</html>
