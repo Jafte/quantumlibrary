@@ -1,0 +1,38 @@
+{% extends "story/base.html" %}
+
+{% load account %}
+
+{% block title %}Список историй{% endblock %}
+
+{% block breadcrumbs_active %}
+    <i class="right chevron icon divider"></i>
+    <div class="active section">Истории</div>
+{% endblock %}
+
+{% block content %}
+    <h1>Квантовые истории готовые для чтения</h1>
+    <div class="ui one stackable cards">
+    {% for story in story_list %}
+    <div class="card">
+        <div class="content">
+            <div class="header">
+                <a href="{{ story.get_absolute_url }}">
+                    {{ story.title }}
+                </a>
+            </div>
+            <div class="meta">
+                {{ story.created }}
+                {% if story.creator %}
+                от {% user_display story.creator %}
+                {% endif %}
+            </div>
+            {% if story.anotation %}
+            <div class="description">
+                <p>{{ story.anotation }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+{% endblock %}

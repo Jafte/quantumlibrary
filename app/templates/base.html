@@ -16,6 +16,7 @@
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/menu.css" %}">
 
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/breadcrumb.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/card.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/divider.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/dropdown.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/form.css" %}">
@@ -35,7 +36,7 @@
                 Quantum Library:
             </a>
 
-            <a class="item" href="#">
+            <a class="item" href="{% url 'story_list' %}">
                 <i class="book icon"></i>
                 Читать 
             </a>
@@ -121,7 +122,7 @@
                 <div class="three wide column">
                     <h4 class="ui inverted header">Внутри</h4>
                     <div class="ui inverted link list">
-                        <a href="#" class="item">Читать</a>
+                        <a href="{% url 'story_list' %}" class="item">Читать</a>
                         <a href="#" class="item">Писать</a>
                     </div>
                 </div>

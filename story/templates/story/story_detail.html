@@ -1,0 +1,20 @@
+{% extends "story/base.html" %}
+
+{% load account %}
+
+{% block title %}{{ story.title }}{% endblock %}
+
+{% block breadcrumbs %}
+    {{block.super}}
+    <i class="right chevron icon divider"></i>
+    <a href="{% url 'story_list' %}" class="section">Истории</a>
+{% endblock %}
+
+{% block breadcrumbs_active %}
+    <i class="right chevron icon divider"></i>
+    <div class="active section">{{ story.title }}</div>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ story.title }}</h1>
+{% endblock %}

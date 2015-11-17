@@ -2,11 +2,14 @@ import random
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse_lazy
 from story.models import Story
-from vanilla import CreateView, DeleteView, ListView, UpdateView
+from vanilla import CreateView, DeleteView, ListView, UpdateView, DetailView
 
 class ListStories(ListView):
     model = Story
+    queryset = Story.objects.filter(is_deleted=False)
 
+class DetailStory(DetailView):
+    model = Story
 
 class CreateStory(CreateView):
     model = Story
@@ -22,7 +25,7 @@ class CreateStory(CreateView):
                 self.request.session['anon_id'] = anon_id
             form.instance.session_key = anon_id
         self.object = form.save()
-        return HttpResponseRedirect(reverse_lazy('story_detail', ))
+        return HttpResponseRedirect(self.object.get_asolute_url())
 
 class EditStory(UpdateView):
     model = Story

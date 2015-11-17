@@ -1,6 +1,7 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from taggit.managers import TaggableManager
 from mptt.models import MPTTModel, TreeForeignKey
@@ -19,6 +20,10 @@ class Story(models.Model):
     created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
     updated = models.DateTimeField(verbose_name=_('Updated'), auto_now_add=True)
     tags = TaggableManager(blank=True)
+    
+    def get_absolute_url(self):
+        return reverse('story_detail', args=[str(self.pk)])
+        
 
 class StoryPart(MPTTModel):
     story = models.ForeignKey(Story, verbose_name=_('Story'), related_name="+")
