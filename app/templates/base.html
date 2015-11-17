@@ -15,11 +15,14 @@
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/image.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/menu.css" %}">
 
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/breadcrumb.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/divider.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/dropdown.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/form.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/segment.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/button.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/list.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/message.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/icon.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/transition.css" %}">
       
@@ -40,20 +43,20 @@
                 <i class="edit icon"></i>
                 Писать
             </a>
-            <a class="item" href="#">
+            <a class="item" href="{% url 'story_create' %}">
                 <i class="plus icon"></i>
                 Добавить
             </a>
 
             <div class="right compact menu">
             {% if not user.is_authenticated %}
-                <a class="item" href="{% url 'account_login' %}">
-                    <i class="sign in icon"></i>
-                    Вход
-                </a>
                 <a class="item" href="{% url 'account_signup' %}">
                     <i class="add user icon"></i>
                     Регистрация
+                </a>
+                <a class="item" href="{% url 'account_login' %}">
+                    <i class="sign in icon"></i>
+                    Вход
                 </a>
             {% else %}
                 <a class="item" href="#">
@@ -93,6 +96,13 @@
         </div>
             {% endfor %}
         {% endif %}
+        <div class="ui breadcrumb">
+        {% block breadcrumbs %}
+            <a href="/" class="section">Главная</a>
+        {% endblock %}
+        {% block breadcrumbs_active %}
+        {% endblock %}
+        </div>
         {% block content %}{% endblock %}
     </div>
     

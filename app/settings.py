@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'mptt',
     'post_office',
     'taggit',
+    'widget_tweaks',
 
     'story',
 )

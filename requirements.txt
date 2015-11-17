@@ -9,6 +9,7 @@ django-mptt==0.7.4
 django-post-office==2.0.3
 django-taggit==0.17.3
 django-vanilla-views==1.0.4
+django-widget-tweaks==1.4.1
 jsonfield==1.0.3
 oauthlib==1.0.3
 python3-openid==3.0.7

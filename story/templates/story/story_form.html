@@ -1,0 +1,55 @@
+{% extends "story/base.html" %}
+
+{% block title %}Новая история{% endblock %}
+
+{% block breadcrumbs %}
+    {{block.super}}
+    <i class="right chevron icon divider"></i>
+    <a href="{% url 'story_list' %}" class="section">Истории</a>
+{% endblock %}
+
+{% block breadcrumbs_active %}
+    <i class="right chevron icon divider"></i>
+    <div class="active section">Колыбель сознания</div>
+{% endblock %}
+
+{% block content %}
+    <h1>Новая история</h1>
+    <div class="ui grid">
+        <div class="ten wide column">
+            <form action="{% url 'story_create' %}" method="post" class="ui form {% if not form.is_valid %} error{% endif %}">
+                {% csrf_token %}
+                {% for hidden in form.hidden_fields %}
+                    {{ hidden }}
+                {% endfor %}
+                {% for field in form.visible_fields %}
+                    <div class="field {% if field.errors %} error{% endif %}{% if field.field.required %} required{% endif %}">
+                        {{ field.label_tag }}
+                        {% if field.errors %}
+                            <div class="ui error message">
+                                {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        {{ field }}
+                        {% if field.help_text %}
+                        <p class="help">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button class="ui green button" type="submit">Создать</button>
+                {% if form.non_field_errors %}
+                <div class="ui error message">
+                    {{ form.non_field_errors }}
+                </div>
+                {% endif %}
+            </form>
+        </div>
+        <div class="six wide column">
+            <div class="ui yellow segment">
+                <h5 class="ui header">При создании новой истории следует помнить:</h5>
+            </div>
+        </div>
+    </div>
+{% endblock %}
