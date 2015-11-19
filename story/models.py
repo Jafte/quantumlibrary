@@ -55,4 +55,14 @@ class StoryPart(MPTTModel):
         return "%s in %s" % (self.id, self.story)
     
     def get_absolute_url(self):
-        return reverse('story_detail_by_part', args=[str(self.story.pk), str(self.pk)])
+        if (self.primary_story_line):
+            return reverse('story_detail_by_part', args=[str(self.story.pk), str(self.primary_story_line.pk)])
+        else:
+            return reverse('story_detail_by_part', args=[str(self.story.pk), str(self.pk)])
+
+    def update_primary_story_line(self, part):
+        self.primary_story_line = part
+        self.save()
+        for p in StoryPart.objects.filter(primary_story_line = self):
+            p.primary_story_line = part
+            p.save()

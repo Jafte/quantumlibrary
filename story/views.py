@@ -10,7 +10,7 @@ from .forms import StoryForm, StoryPartForm
 
 class ListStories(ListView):
     model = Story
-    queryset = Story.objects.filter(is_deleted=False)
+    queryset = Story.objects.filter(is_deleted=False).exclude(primary_story_line__isnull=True)
 
 class DetailStory(DetailView):
     model = Story
@@ -24,13 +24,15 @@ class DetailStory(DetailView):
         part_pk = self.kwargs.get('step_pk', False)
         if part_pk:
             part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
+            if part.primary_story_line:
+                part = part.primary_story_line
         else:
             if story.primary_story_line:
                 part = story.primary_story_line
             else:
                 raise Http404
 
-        context['part'] = part
+        context['primary_story_line'] = part
         context['story_parts'] = part.get_ancestors(include_self=True)
 
         return context
@@ -114,6 +116,9 @@ class CreateStoryPart(FormView):
         
         part.story = story
         part.save()
+
+        parent_part.update_primary_story_line(part)
+
     
         if (parent_part == story.primary_story_line):
             story.primary_story_line = part

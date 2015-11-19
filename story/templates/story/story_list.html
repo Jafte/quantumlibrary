@@ -11,28 +11,24 @@
 
 {% block content %}
     <h1>Квантовые истории</h1>
-    <div class="ui one stackable cards">
     {% for story in story_list %}
-    <div class="card">
-        <div class="content">
-            <div class="header">
-                <a href="{{ story.get_absolute_url }}">
-                    {{ story.title }}
-                </a>
-            </div>
-            <div class="meta">
-                {{ story.created }}
-                {% if story.creator %}
-                от {% user_display story.creator %}
-                {% endif %}
-            </div>
-            {% if story.anotation %}
-            <div class="description">
-                <p>{{ story.anotation }}</p>
-            </div>
-            {% endif %}
+    <div class="ui vertical segment">
+        <h4 class="ui header">
+            <a class="header" href="{{ story.get_absolute_url }}">
+                {{ story.title }}
+            </a>
+        </h4>
+        {% if story.anotation %}
+        <div class="description">
+            <p>{{ story.anotation }}</p>
         </div>
+        {% endif %}
+        <small>
+            {{ story.created }}
+            {% if story.creator %}
+            от {% user_display story.creator %}
+            {% endif %}
+        </small>
     </div>
     {% endfor %}
-    </div>
 {% endblock %}

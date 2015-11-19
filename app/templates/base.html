@@ -27,6 +27,7 @@
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/list.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/message.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/modal.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/popup.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/segment.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/transition.css" %}">
       
@@ -141,10 +142,11 @@
     </div>
 
     <script src="{% static "app/js/jquery.min.js" %}"></script>
-    <script src="{% static "semantic-ui/components/visibility.js" %}"></script>
-    <script src="{% static "semantic-ui/components/transition.js" %}"></script>
-    <script src="{% static "semantic-ui/components/modal.js" %}"></script>
     <script src="{% static "semantic-ui/components/dimmer.js" %}"></script>
+    <script src="{% static "semantic-ui/components/modal.js" %}"></script>
+    <script src="{% static "semantic-ui/components/popup.js" %}"></script>
+    <script src="{% static "semantic-ui/components/transition.js" %}"></script>
+    <script src="{% static "semantic-ui/components/visibility.js" %}"></script>
     <script>
         $(document)
             .ready(function() {
@@ -154,6 +156,18 @@
                             .closest('.message')
                             .transition('fade')
                         ;
+                    })
+                ;
+                $('.show-popup')
+                    .popup()
+                ;
+                $('.modal')
+                    .modal({
+                        onShow: function() {
+                            $('.show-popup')
+                                .popup('hide')
+                            ;
+                        }
                     })
                 ;
                 {% block javascript %}{% endblock %}

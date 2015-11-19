@@ -1,11 +1,15 @@
 {% extends "story/base.html" %}
 
-{% block title %}Новая история{% endblock %}
+{% block title %}{% if story %}{{ story.title }} :: новая часть{% else %}Новая история{% endif %}{% endblock %}
 
 {% block breadcrumbs %}
     {{block.super}}
     <i class="right chevron icon divider"></i>
     <a href="{% url 'story_list' %}" class="section">Истории</a>
+    {% if story %}
+    <i class="right chevron icon divider"></i>
+    <a href="{{ story.get_absolute_url }}" class="section">{{ story.title }}</a>
+    {% endif %}
 {% endblock %}
 
 {% block breadcrumbs_active %}
@@ -25,6 +29,7 @@
         <div class="ten wide column">
             {% if parent_part %}
             <div class="ui segment">
+                <h5 class="ui header">Предыдущий блок:</h5>
                 {{ parent_part.text }}    
             </div>
             {% endif %}
