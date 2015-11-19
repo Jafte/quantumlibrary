@@ -16,15 +16,18 @@
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/menu.css" %}">
 
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/breadcrumb.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/button.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/card.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/divider.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/dimmer.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/dropdown.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/form.css" %}">
-      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/segment.css" %}">
-      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/button.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/icon.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/label.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/list.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/message.css" %}">
-      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/icon.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/modal.css" %}">
+      <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/segment.css" %}">
       <link rel="stylesheet" type="text/css" href="{% static "semantic-ui/components/transition.css" %}">
       
       <link rel="stylesheet" type="text/css" href="{% static "app/css/style.css" %}">
@@ -140,6 +143,8 @@
     <script src="{% static "app/js/jquery.min.js" %}"></script>
     <script src="{% static "semantic-ui/components/visibility.js" %}"></script>
     <script src="{% static "semantic-ui/components/transition.js" %}"></script>
+    <script src="{% static "semantic-ui/components/modal.js" %}"></script>
+    <script src="{% static "semantic-ui/components/dimmer.js" %}"></script>
     <script>
         $(document)
             .ready(function() {
@@ -151,9 +156,9 @@
                         ;
                     })
                 ;
+                {% block javascript %}{% endblock %}
             })
         ;
     </script>
-
 </body>
 </html>

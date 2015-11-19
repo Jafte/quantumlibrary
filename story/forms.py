@@ -7,3 +7,6 @@ class StoryForm(forms.Form):
     anotation = forms.CharField(label=_('Description'), required=False, widget=forms.Textarea())
     text = forms.CharField(label=_('First part'), widget=forms.Textarea())
     tags = TagField(label=_('Tags'), required=False)
+
+class StoryPartForm(forms.Form):
+    text = forms.CharField(label=_('Text'), widget=forms.Textarea())

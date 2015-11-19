@@ -53,3 +53,6 @@ class StoryPart(MPTTModel):
 
     def __str__(self):
         return "%s in %s" % (self.id, self.story)
+    
+    def get_absolute_url(self):
+        return reverse('story_detail_by_part', args=[str(self.story.pk), str(self.pk)])

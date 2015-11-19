@@ -14,10 +14,21 @@
 {% endblock %}
 
 {% block content %}
-    <h1>Новая история</h1>
+    <h1>
+    {% if story %}
+    {{ story.title }} :: новая часть
+    {% else %}
+    Новая история
+    {% endif %}
+    </h1>
     <div class="ui grid">
         <div class="ten wide column">
-            <form action="{% url 'story_create' %}" method="post" class="ui form {% if not form.is_valid %} error{% endif %}">
+            {% if parent_part %}
+            <div class="ui segment">
+                {{ parent_part.text }}    
+            </div>
+            {% endif %}
+            <form action="." method="post" class="ui form {% if not form.is_valid %} error{% endif %}">
                 {% csrf_token %}
                 {% for hidden in form.hidden_fields %}
                     {{ hidden }}
@@ -48,6 +59,16 @@
         </div>
         <div class="six wide column">
             <div class="ui yellow segment">
+                {% if story %}
+                <h4 class="ui header">При продолжении истории следует помнить:</h4>
+                <div class="ui relaxed divided list">
+                    <div class="item">
+                        <i class="warning circle icon red"></i>
+                        <div class="content">
+                        </div>
+                    </div>
+                </div>
+                {% else %}
                 <h4 class="ui header">При создании новой истории следует помнить:</h4>
                 <div class="ui relaxed divided list">
                     <div class="item">
@@ -89,6 +110,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>

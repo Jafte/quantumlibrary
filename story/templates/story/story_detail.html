@@ -17,16 +17,51 @@
 
 {% block content %}
     <h1>{{ story.title }}</h1>
+    <div class="ui one column grid">
+        {% for part in story_parts %}
+        <div id="part-{{ part.pk }}" class="column">
+            <a href="{% url 'story_part_create' story.pk part.pk %}" class="ui small bottom left attached label">
+                продолжить отсюда
+            </a>
+            {% if part.is_child_node %}
+                <a class="ui small bottom right attached label show-parts-{{ part.pk }}">вариаций: {{ part.get_siblings|length }}</a>
+                {% if part.get_siblings %}
+                    <div class="ui modal parts-{{ part.pk }}">
+                        <i class="close icon"></i>
+                        <div class="header">
+                            варианты сюжета
+                        </div>
+                        <div class="content">
+                            {% for p in part.get_siblings %}
+                                <a href="{{ p.get_absolute_url }}">
+                                    {{ p.text }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+            <div class="story_part">
+                {{ part.text }}                
+            </div>
+        </div>
+        {% empty %}
+        <div class="ui segment">
+            Тлен и пустота в твоей истории :(
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+
+{% block javascript %}
     {% for part in story_parts %}
-    <div id="part-{{ part.pk }}" class="story_part">
-        {% if step.is_child_node %}
-        <div class="ui top attached label">{{ part.get_siblings|length }} вариаций</div>
+        {% if part.is_child_node %}
+            {% if part.get_siblings %}
+                $('.parts-{{ part.pk }}.modal')
+                    .modal('attach events', '.show-parts-{{ part.pk }}', 'show')
+                ;
+            {% endif %}
         {% endif %}
-        {{ part.text }}
-    </div>
-    {% empty %}
-    <div class="ui segment">
-        Тлен и пустота в твоей истории :(
-    </div>
     {% endfor %}
 {% endblock %}

@@ -1,11 +1,12 @@
 import random
 from django.http import HttpResponseRedirect, Http404
+from django.template.response import TemplateResponse
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from story.models import Story, StoryPart
 from vanilla import ListView, DetailView, FormView
 
-from .forms import StoryForm
+from .forms import StoryForm, StoryPartForm
 
 class ListStories(ListView):
     model = Story
@@ -13,13 +14,14 @@ class ListStories(ListView):
 
 class DetailStory(DetailView):
     model = Story
+    lookup_url_kwarg = 'story_pk'
 
     def get_context_data(self, **kwargs):
         context = super(DetailStory, self).get_context_data(**kwargs)
         context['story_parts'] = []
-        story = self.get_object()
+        story = self.object
         
-        part_pk = self.kwargs.get('step', False)
+        part_pk = self.kwargs.get('step_pk', False)
         if part_pk:
             part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
         else:
@@ -28,6 +30,7 @@ class DetailStory(DetailView):
             else:
                 raise Http404
 
+        context['part'] = part
         context['story_parts'] = part.get_ancestors(include_self=True)
 
         return context
@@ -70,6 +73,54 @@ class CreateStory(FormView):
         story.save()
         
         return HttpResponseRedirect(story.get_absolute_url())
+
+class CreateStoryPart(FormView):
+    form_class = StoryPartForm
+    template_name = 'story/story_form.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(CreateStoryPart, self).get_context_data(**kwargs)
+        
+        parent_part_pk = self.kwargs.get('step_pk', False)
+        story_pk = self.kwargs.get('story_pk', False)
+        
+        story = get_object_or_404(Story, pk=story_pk)
+        parent_part = get_object_or_404(StoryPart.objects.filter(story=story), pk=parent_part_pk)
+        
+        context['story'] = story
+        context['parent_part'] = parent_part
+        
+        return context
+    
+    def form_valid(self, form):
+        context = self.get_context_data(form=form)
+        story = context['story']
+        parent_part = context['parent_part']
+        
+        part = StoryPart(
+                parent = parent_part,
+                text = form.cleaned_data['text'],
+            )
+
+        if self.request.user.is_authenticated():
+            part.author = self.request.user
+        else:
+            anon_id = self.request.session.get('anon_id', False)
+            if not anon_id:
+                anon_id = hex(random.getrandbits(128))[2:-1]
+                self.request.session['anon_id'] = anon_id
+
+            part.session_key = anon_id
+        
+        part.story = story
+        part.save()
+    
+        if (parent_part == story.primary_story_line):
+            story.primary_story_line = part
+            story.save()
+        
+        return HttpResponseRedirect(part.get_absolute_url())
+
 
 class EditStory(FormView):
     form_class = StoryForm

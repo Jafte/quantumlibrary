@@ -1,8 +1,11 @@
 #main-content {
-    padding-top: 4em;
-    padding-bottom: 1em;
+    padding: 4em 0;
 }
 
 .footer.segment {
     padding: 5em 0em;
+}
+
+.story_part {
+    padding: 0;
 }
