@@ -1,9 +1,9 @@
 import random
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import get_object_or_404
 from story.models import Story, StoryPart
-from vanilla import CreateView, DeleteView, ListView, UpdateView, DetailView, \
-                    FormView
+from vanilla import ListView, DetailView, FormView
 
 from .forms import StoryForm
 
@@ -16,11 +16,19 @@ class DetailStory(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(DetailStory, self).get_context_data(**kwargs)
-        part = kwargs.get('part', self.object.primary_story_line)
-        if part:
-            context['story_parts'] = part.get_ancestors(include_self=True)
+        context['story_parts'] = []
+        story = self.get_object()
+        
+        part_pk = self.kwargs.get('step', False)
+        if part_pk:
+            part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
         else:
-            context['story_parts'] = False
+            if story.primary_story_line:
+                part = story.primary_story_line
+            else:
+                raise Http404
+
+        context['story_parts'] = part.get_ancestors(include_self=True)
 
         return context
 
@@ -63,11 +71,6 @@ class CreateStory(FormView):
         
         return HttpResponseRedirect(story.get_absolute_url())
 
-class EditStory(UpdateView):
-    model = Story
-    success_url = reverse_lazy('story_detail')
-
-
-class DeleteStory(DeleteView):
-    model = Story
-    success_url = reverse_lazy('story_list')
+class EditStory(FormView):
+    form_class = StoryForm
+    template_name = 'story/story_form.html'
