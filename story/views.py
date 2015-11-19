@@ -14,6 +14,16 @@ class ListStories(ListView):
 class DetailStory(DetailView):
     model = Story
 
+    def get_context_data(self, **kwargs):
+        context = super(DetailStory, self).get_context_data(**kwargs)
+        part = kwargs.get('part', self.object.primary_story_line)
+        if part:
+            context['story_parts'] = part.get_ancestors(include_self=True)
+        else:
+            context['story_parts'] = False
+
+        return context
+
 class CreateStory(FormView):
     form_class = StoryForm
     template_name = 'story/story_form.html'

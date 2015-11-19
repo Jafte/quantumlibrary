@@ -17,4 +17,16 @@
 
 {% block content %}
     <h1>{{ story.title }}</h1>
+    {% for part in story_parts %}
+    <div id="part-{{ part.pk }}" class="story_part">
+        {% if step.is_child_node %}
+        <div class="ui top attached label">{{ part.get_siblings|length }} вариаций</div>
+        {% endif %}
+        {{ part.text }}
+    </div>
+    {% empty %}
+    <div class="ui segment">
+        Тлен и пустота в твоей истории :(
+    </div>
+    {% endfor %}
 {% endblock %}

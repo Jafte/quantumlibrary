@@ -20,10 +20,15 @@ class Story(models.Model):
     created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
     updated = models.DateTimeField(verbose_name=_('Updated'), auto_now_add=True)
     tags = TaggableManager(blank=True)
-    
+
+    class Meta:
+        verbose_name_plural = _('stories')
+
+    def __str__(self):
+        return self.title
+
     def get_absolute_url(self):
         return reverse('story_detail', args=[str(self.pk)])
-        
 
 class StoryPart(MPTTModel):
     story = models.ForeignKey(Story, verbose_name=_('Story'), related_name="+")
@@ -38,3 +43,6 @@ class StoryPart(MPTTModel):
 
     class MPTTMeta:
         order_insertion_by = ['created']
+
+    class Meta:
+        verbose_name_plural = _('story parts')
