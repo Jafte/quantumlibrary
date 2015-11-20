@@ -17,51 +17,51 @@
 
 {% block content %}
     <h1>{{ story.title }}</h1>
-    <div class="ui one column grid">
-        {% for part in story_parts %}
-            <div id="part-{{ part.pk }}" class="column">
-                {% if part.is_child_node %}
-                    <a class="ui tiny bottom left attached label" href="{% url 'story_part_create' story.pk part.parent.pk %}" >
-                        предложить версию
-                    </a>
-                    <a
-                        class="ui floating teal label show-popup show-parts-{{ part.pk }}"
-                        data-content="алтернативных вариантов"
-                    >
-                        {{ part.get_siblings|length }}
-                    </a>
-                {% endif %}
-                <div class="content">
-                    {{ part.text }}
+    {% for part in story_parts %}
+        <div class="ui vertical segment" id="part-{{ part.pk }}" >
+            {% if part.is_child_node %}
+            <div class="ui left rail">
+                <a href="{% url 'story_part_create' story.pk part.parent.pk %}" class="ui tiny icon right floated basic green button show-popup" data-content="добавить алтернативный вариант">
+                    <i class="plus icon"></i>
+                </a>
+            </div>
+            <div class="ui right rail">
+                <div class="ui circular icon red basic tiny button show-parts-{{ part.pk }} show-popup" data-content="дерево алтернативных вариантов">
+                    <i class="sitemap icon"></i>
                 </div>
             </div>
-            {% if part.is_child_node and part.get_siblings %}
-                <div class="ui modal parts-{{ part.pk }}">
-                    <i class="close icon"></i>
-                    <div class="content">
-                        {% for p in part.get_siblings %}
-                            <div class="ui vertical segment">
-                                <a class="meta" href="{{ p.get_absolute_url }}">
-                                    #{{ p.id }} от {{ p.created }}
-                                </a>
-                                <div>
-                                    {{ p.text }}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                </div>
             {% endif %}
-        {% empty %}
-        <div class="ui segment">
-            Тлен и пустота в твоей истории :(
+
+            <div class="content">
+                {{ part.text }}
+            </div>
         </div>
-        {% endfor %}
-        <div class="column">
-            <a class="ui fluid basic olive button" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
-                продолжить историю
-            </a>
-        </div>
+        {% if part.is_child_node %}
+            <div class="ui modal parts-{{ part.pk }}">
+                <i class="close icon"></i>
+                <div class="content">
+                    {% for p in part.get_siblings %}
+                        <div class="ui vertical segment">
+                            <a class="meta" href="{{ p.get_absolute_url }}">
+                                #{{ p.id }} от {{ p.created }}
+                            </a>
+                            <div>
+                                {{ p.text }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+    {% empty %}
+    <div class="ui vertical segment">
+        Тлен и пустота в твоей истории :(
+    </div>
+    {% endfor %}
+    <div class="ui vertical segment">
+        <a class="ui fluid basic olive button" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
+            продолжить историю
+        </a>
     </div>
 {% endblock %}
 
@@ -69,11 +69,9 @@
 {% block javascript %}
     {% for part in story_parts %}
         {% if part.is_child_node %}
-            {% if part.get_siblings %}
-                $('.parts-{{ part.pk }}.modal')
-                    .modal('attach events', '.show-parts-{{ part.pk }}', 'show')
-                ;
-            {% endif %}
+            $('.parts-{{ part.pk }}.modal')
+                .modal('attach events', '.show-parts-{{ part.pk }}', 'show')
+            ;
         {% endif %}
     {% endfor %}
 {% endblock %}
