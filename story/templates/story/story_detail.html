@@ -19,22 +19,19 @@
     <h1>{{ story.title }}</h1>
     {% for part in story_parts %}
         <div class="ui vertical segment" id="part-{{ part.pk }}" >
-            {% if part.is_child_node %}
-            <div class="ui left rail">
-                <a href="{% url 'story_part_create' story.pk part.parent.pk %}" class="ui tiny icon right floated basic green button show-popup" data-content="добавить алтернативный вариант">
-                    <i class="plus icon"></i>
-                </a>
-            </div>
-            <div class="ui right rail">
-                <div class="ui circular icon red basic tiny button show-parts-{{ part.pk }} show-popup" data-content="дерево алтернативных вариантов">
-                    <i class="sitemap icon"></i>
-                </div>
-            </div>
-            {% endif %}
-
-            <div class="content">
+            <div class="content margin-bottom">
                 {{ part.text }}
             </div>
+            {% if part.is_child_node %}
+            <a href="{% url 'story_part_create' story.pk part.parent.pk %}" class="ui tiny icon basic green button">
+                <i class="plus icon"></i>
+                добавить алтернативный вариант
+            </a>
+            <div class="ui circular icon red basic tiny button show-parts-{{ part.pk }} right floated ">
+                <i class="sitemap icon"></i>
+                дерево алтернативных вариантов
+            </div>
+            {% endif %}
         </div>
         {% if part.is_child_node %}
             <div class="ui modal parts-{{ part.pk }}">
