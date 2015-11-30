@@ -22,6 +22,7 @@ class DetailStory(DetailView):
         story = self.object
         
         part_pk = self.kwargs.get('step_pk', False)
+        root_part = get_object_or_404(StoryPart.objects.filter(story=story), level=0)
         if part_pk:
             part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
             if part.primary_story_line:
@@ -33,6 +34,7 @@ class DetailStory(DetailView):
                 raise Http404
 
         context['primary_story_line'] = part
+        context['root_story_line'] = root_part
         context['story_parts'] = part.get_ancestors(include_self=True)
 
         return context
