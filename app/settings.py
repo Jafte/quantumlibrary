@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'cachalot',
+#    'cachalot',
     'debug_toolbar',
     'django_activeurl',
     'mptt',
@@ -145,7 +145,7 @@ DEBUG_TOOLBAR_PANELS = [
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel',
-    'cachalot.panels.CachalotPanel',
+#    'cachalot.panels.CachalotPanel',
 ]
 
 try:
