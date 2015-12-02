@@ -1,10 +1,9 @@
 defusedxml==0.4.1
-Django==1.8.6
+Django==1.9
 django-activeurl==0.1.9
 django-allauth==0.24.1
 django-cachalot==1.1.0
 django-debug-toolbar==1.4
-django-flat-theme==1.1.1
 django-mptt==0.7.4
 django-post-office==2.0.3
 django-taggit==0.17.3
