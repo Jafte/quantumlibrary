@@ -5,12 +5,17 @@ from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from story.models import Story, StoryPart
 from vanilla import ListView, DetailView, FormView
+from taggit.utils import edit_string_for_tags
 
 from .forms import StoryForm, StoryPartForm
 
 class ListStories(ListView):
     model = Story
     queryset = Story.objects.filter(is_deleted=False).exclude(primary_story_line__isnull=True)
+
+class ListFinishedStories(ListView):
+    model = Story
+    queryset = Story.objects.filter(is_deleted=False, is_finished=True).exclude(primary_story_line__isnull=True)
 
 class DetailStory(DetailView):
     model = Story
@@ -132,3 +137,21 @@ class CreateStoryPart(FormView):
 class EditStory(FormView):
     form_class = StoryForm
     template_name = 'story/story_form.html'
+
+    def get_story(self):
+        story_pk = self.kwargs.get('story_pk', False)
+        story = get_object_or_404(Story, pk=story_pk)
+        return story
+
+    def get(self, request, *args, **kwargs):
+        story = self.get_story()
+        data = {
+            'title': story.title,
+            'anotation': story.anotation,
+            'tags': edit_string_for_tags([o for o in story.tags.all()]),
+            'text': story.get_first_part().text
+        }
+        form = self.get_form(data)
+        context = self.get_context_data(form=form)
+        context['story'] = story
+        return self.render_to_response(context)

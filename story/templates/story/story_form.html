@@ -1,6 +1,6 @@
 {% extends "story/base.html" %}
 
-{% block title %}{% if story %}{{ story.title }} :: новая часть{% else %}Новая история{% endif %}{% endblock %}
+{% block title %}{% if story %}{{ story.title }}{% if parent_part %} :: новая часть{% endif %}{% else %}Новая история{% endif %}{% endblock %}
 
 {% block breadcrumbs %}
     {{block.super}}
@@ -20,7 +20,7 @@
 {% block content %}
     <h1>
     {% if story %}
-    {{ story.title }} :: новая часть
+    {{ story.title }}{% if parent_part %} :: новая часть{% endif %}
     {% else %}
     Новая история
     {% endif %}
@@ -54,7 +54,7 @@
                         {% endif %}
                     </div>
                 {% endfor %}
-                <button class="ui green button" type="submit">Создать</button>
+                <button class="ui green button" type="submit">{% if story and not parent_part %}Сохранить{% else %}]Создать{% endif %}</button>
                 {% if form.non_field_errors %}
                 <div class="ui error message">
                     {{ form.non_field_errors }}
@@ -64,7 +64,7 @@
         </div>
         <div class="six wide column">
             <div class="ui yellow segment">
-                {% if story %}
+                {% if story and parent_part %}
                 <h4 class="ui header">При продолжении истории следует помнить:</h4>
                 <div class="ui relaxed divided list">
                     <div class="item">

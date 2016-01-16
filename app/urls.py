@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^accounts/profile/$', TemplateView.as_view(template_name="profile/index.html")),
     url(r'^accounts/', include('allauth.urls')),
 
     url(r'^story/', include('story.urls')),

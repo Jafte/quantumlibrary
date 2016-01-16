@@ -17,19 +17,29 @@
 
 {% block content %}
     <h1>{{ story.title }}</h1>
+    {% if story.creator == user %}
+        <a href="{% url 'story_edit' story.pk %}">
+            править
+        </a>
+    {% endif %}
     {% for part in story_parts %}
         <div class="ui vertical segment" id="part-{{ part.pk }}" >
             <div class="content margin-bottom">
                 {{ part.text }}
             </div>
+            {% if part.author == user %}
+                вы создатель отрывка
+            {% endif %}
             {% if part.is_child_node %}
             <a href="{% url 'story_part_create' story.pk part.parent.pk %}" class="ui tiny icon basic green button">
                 <i class="plus icon"></i>
                 добавить алтернативный вариант
             </a>
+            {% endif %}
+            {% if part.get_siblings %}
             <div class="ui circular icon red basic tiny button show-parts-{{ part.pk }} right floated ">
                 <i class="sitemap icon"></i>
-                дерево алтернативных вариантов
+                алтернативные варианты
             </div>
             {% endif %}
         </div>
@@ -39,12 +49,13 @@
                 <div class="content">
                     {% for p in part.get_siblings %}
                         <div class="ui vertical segment">
-                            <a class="meta" href="{{ p.get_absolute_url }}">
+                            <div class="meta">
                                 #{{ p.id }} от {{ p.created }}
-                            </a>
+                            </div>
                             <div>
                                 {{ p.text }}
                             </div>
+                            <a href="{{ p.get_absolute_url }}">выбрать</a>
                         </div>
                     {% endfor %}
                 </div>
