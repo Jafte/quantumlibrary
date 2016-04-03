@@ -4,82 +4,56 @@
 
 {% block title %}{{ story.title }}{% endblock %}
 
-{% block breadcrumbs %}
-    {{block.super}}
-    <i class="right chevron icon divider"></i>
-    <a href="{% url 'story_list' %}" class="section">Истории</a>
+{% block breadcrumbs_path %}
+    <li><a href="{% url 'story_list' %}">Истории</a></li>
 {% endblock %}
 
 {% block breadcrumbs_active %}
-    <i class="right chevron icon divider"></i>
-    <div class="active section">{{ story.title }}</div>
+    <li class="active">{{ story.title }}</li>
 {% endblock %}
 
 {% block content %}
-    <h1>{{ story.title }}</h1>
+<article class="uk-article">
+    <h1 class="uk-article-title">{{ story.title }}</h1>
     {% if story.creator == user %}
         <a href="{% url 'story_edit' story.pk %}">
             править
         </a>
     {% endif %}
     {% for part in story_parts %}
-        <div class="ui vertical segment" id="part-{{ part.pk }}" >
-            <div class="content margin-bottom">
-                {{ part.text }}
+        <div class="uk-panel uk-panel-hover" id="part-{{ part.pk }}">
+            <div class="uk-panel-badge">
+                {% if part.author == user %}
+                <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
+                {% endif %}
+
+                {% if part.is_child_node %}
+                <a href="{% url 'story_part_create' story.pk part.parent.pk %}">
+                    <div class="uk-badge uk-badge-danger">
+                        <i class="uk-icon-code-fork"></i> предложить свою версию
+                    </div>
+                </a>
+                {% endif %}
+                {% if part.get_siblings %}
+                <a class="modal-story-variants-show" href="{% url 'story_detail_part_variants' story.pk part.pk %}" data-uk-modal='{"target":"#modal-story-variants"}'>
+                    <div class="uk-badge uk-badge-warning">
+                        <i class="uk-icon-sitemap"></i>
+                        алтернативные варианты
+                    </div>
+                </a>
+                {% endif %}
             </div>
-            {% if part.author == user %}
-                вы создатель отрывка
-            {% endif %}
-            {% if part.is_child_node %}
-            <a href="{% url 'story_part_create' story.pk part.parent.pk %}" class="ui tiny icon basic green button">
-                <i class="plus icon"></i>
-                добавить алтернативный вариант
-            </a>
-            {% endif %}
-            {% if part.get_siblings %}
-            <div class="ui circular icon red basic tiny button show-parts-{{ part.pk }} right floated ">
-                <i class="sitemap icon"></i>
-                алтернативные варианты
-            </div>
-            {% endif %}
+
+            <p>{{ part.text }}</p>
         </div>
-        {% if part.is_child_node %}
-            <div class="ui modal parts-{{ part.pk }}">
-                <i class="close icon"></i>
-                <div class="content">
-                    {% for p in part.get_siblings %}
-                        <div class="ui vertical segment">
-                            <div class="meta">
-                                #{{ p.id }} от {{ p.created }}
-                            </div>
-                            <div>
-                                {{ p.text }}
-                            </div>
-                            <a href="{{ p.get_absolute_url }}">выбрать</a>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        {% endif %}
     {% empty %}
-    <div class="ui vertical segment">
-        Тлен и пустота в твоей истории :(
-    </div>
+        <div class="uk-panel uk-panel-box">
+            <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
+        </div>
     {% endfor %}
-    <div class="ui vertical segment">
-        <a class="ui fluid basic olive button" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
-            продолжить историю
-        </a>
-    </div>
-{% endblock %}
-
-
-{% block javascript %}
-    {% for part in story_parts %}
-        {% if part.is_child_node %}
-            $('.parts-{{ part.pk }}.modal')
-                .modal('attach events', '.show-parts-{{ part.pk }}', 'show')
-            ;
-        {% endif %}
-    {% endfor %}
+    <hr class="uk-article-divider" />
+    <a class="uk-button" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
+        продолжить историю
+    </a>
+</article>
 {% endblock %}

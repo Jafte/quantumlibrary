@@ -9,6 +9,7 @@ urlpatterns = [
     url(r"^s(?P<story_pk>\d+)/$", views.DetailStory.as_view(), name="story_detail"),
     url(r"^s(?P<story_pk>\d+)/tree/$", views.DetailStory.as_view(template_name = "story/story_tree.html"), name="story_detail_tree"),
     url(r"^s(?P<story_pk>\d+)/d(?P<step_pk>\d+)/$", views.DetailStory.as_view(), name="story_detail_by_part"),
+    url(r"^s(?P<story_pk>\d+)/v(?P<step_pk>\d+)/$", views.DetailStoryVariants.as_view(), name="story_detail_part_variants"),
     url(r"^s(?P<story_pk>\d+)/d(?P<step_pk>\d+)/add/$", views.CreateStoryPart.as_view(), name="story_part_create"),
     url(r"^s(?P<story_pk>\d+)/edit/$", views.EditStory.as_view(), name="story_edit"),
 ]

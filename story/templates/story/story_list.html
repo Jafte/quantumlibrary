@@ -5,30 +5,27 @@
 {% block title %}Список историй{% endblock %}
 
 {% block breadcrumbs_active %}
-    <i class="right chevron icon divider"></i>
-    <div class="active section">Истории</div>
+    <li class="active">Истории</li>
 {% endblock %}
 
 {% block content %}
     <h1>Квантовые истории</h1>
     {% for story in story_list %}
-    <div class="ui vertical segment">
-        <h4 class="ui header">
-            <a class="header" href="{{ story.get_absolute_url }}">
+    <div class="uk-panel uk-panel-box">
+        <h4 class="uk-panel-title">
+            <a href="{{ story.get_absolute_url }}">
                 {{ story.title }}
             </a>
         </h4>
         {% if story.anotation %}
-        <div class="description">
-            <p>{{ story.anotation }}</p>
-        </div>
+        <p>{{ story.anotation }}</p>
         {% endif %}
-        <small>
+        <div class="uk-text-muted">
             {{ story.created }}
             {% if story.creator %}
             от {% user_display story.creator %}
             {% endif %}
-        </small>
+        </div>
     </div>
     {% endfor %}
 {% endblock %}

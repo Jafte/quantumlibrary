@@ -56,7 +56,8 @@ docs/_build/
 # PyBuilder
 target/
 
-.idea/
+/.idea/
 */local_settings.py
-db.sqlite3
-static/
+/db.sqlite3
+/static/
+/.sass-cache/

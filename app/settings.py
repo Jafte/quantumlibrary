@@ -49,7 +49,6 @@ INSTALLED_APPS = (
     'django_activeurl',
     'mptt',
     'post_office',
-    'taggit',
     'widget_tweaks',
 
     'story',

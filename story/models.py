@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
-from taggit.managers import TaggableManager
 from mptt.models import MPTTModel, TreeForeignKey
 
 @python_2_unicode_compatible
@@ -24,7 +23,6 @@ class Story(models.Model):
     primary_story_line = models.ForeignKey('StoryPart', verbose_name=_('Primary story line'), related_name="+", blank=True, null=True)
     created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
     updated = models.DateTimeField(verbose_name=_('Updated'), auto_now_add=True)
-    tags = TaggableManager(blank=True)
 
     class Meta:
         verbose_name_plural = _('stories')
@@ -60,7 +58,7 @@ class StoryPart(MPTTModel):
 
     def __str__(self):
         return "%s in %s" % (self.id, self.story)
-    
+
     def get_absolute_url(self):
         if (self.primary_story_line):
             return reverse('story_detail_by_part', args=[str(self.story.pk), str(self.primary_story_line.pk)])

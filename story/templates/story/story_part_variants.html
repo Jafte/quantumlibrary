@@ -1,0 +1,54 @@
+{% extends "story/base.html" %}
+
+{% load account %}
+
+{% block title %}{{ story.title }}{% endblock %}
+
+{% block breadcrumbs_path %}
+    <li><a href="{% url 'story_list' %}">Истории</a></li>
+{% endblock %}
+
+{% block breadcrumbs_active %}
+    <li class="active">{{ story.title }}</li>
+{% endblock %}
+
+{% block content %}
+<article class="uk-article">
+    <h1 class="uk-article-title">{{ story.title }}</h1>
+    <p>варианты для блока #{{ part_original.level }}</p>
+
+    {% for part in part_variants %}
+        <div class="uk-panel uk-panel-hover" id="part-{{ part.pk }}">
+            <div class="uk-panel-badge">
+                {% if part.author == user %}
+                    <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
+                {% endif %}
+
+                {% if part == part_original %}
+                    <div class="uk-badge uk-badge-success">
+                        <i class="uk-icon-check"></i>
+                        выбранный вариант
+                    </div>
+                {% else %}
+                    <a href="{% url 'story_detail_by_part' story.pk part.pk %}">
+                        <div class="uk-badge uk-badge-warning">
+                            <i class="uk-icon-level-down"></i>
+                            выбрать
+                        </div>
+                    </a>
+                {% endif %}
+            </div>
+            <p>{{ part.text }}</p>
+        </div>
+    {% empty %}
+        <div class="uk-panel uk-panel-box">
+            <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
+        </div>
+    {% endfor %}
+</article>
+<hr/>
+<a href="{% url 'story_part_create' story.pk part_original.parent.pk %}" class="uk-button">
+    <i class="uk-icon-code-fork"></i>
+    предложить свою версию
+</a>
+{% endblock %}

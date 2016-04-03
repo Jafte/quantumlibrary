@@ -1,0 +1,30 @@
+{% load widget_tweaks %}
+{% csrf_token %}
+{% for hidden in form.hidden_fields %}
+    {{ hidden }}
+{% endfor %}
+{% for field in form.visible_fields %}
+    <div class="uk-form-row">
+        <label class="uk-form-label" for="{{ field.id_for_label }}">
+            {{ field.label }}
+        </label>
+        <div class="uk-form-controls">
+            {{ field|add_class:"uk-width-1-1"|add_error_class:"uk-form-danger" }}
+            {% if field.help_text %}
+            <p class="uk-form-help-block">{{ field.help_text|safe }}</p>
+            {% endif %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                <p class="uk-form-help-block uk-alert uk-alert-danger">
+                    {{ error }}
+                </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endfor %}
+{% if form.non_field_errors %}
+<div class="uk-alert uk-alert-danger">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}

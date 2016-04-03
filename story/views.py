@@ -1,25 +1,27 @@
 import random
 from django.http import HttpResponseRedirect, Http404
-from django.template.response import TemplateResponse
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from story.models import Story, StoryPart
 from vanilla import ListView, DetailView, FormView
 from taggit.utils import edit_string_for_tags
-
+from app.utils import JSONResponseMixin
 from .forms import StoryForm, StoryPartForm
 
 class ListStories(ListView):
     model = Story
     queryset = Story.objects.filter(is_deleted=False).exclude(primary_story_line__isnull=True)
+    template_name = 'story/story_list.html'
 
 class ListFinishedStories(ListView):
     model = Story
     queryset = Story.objects.filter(is_deleted=False, is_finished=True).exclude(primary_story_line__isnull=True)
+    template_name = 'story/story_list.html'
 
 class DetailStory(DetailView):
     model = Story
     lookup_url_kwarg = 'story_pk'
+    template_name = 'story/story_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super(DetailStory, self).get_context_data(**kwargs)
@@ -43,6 +45,46 @@ class DetailStory(DetailView):
         context['story_parts'] = part.get_ancestors(include_self=True)
 
         return context
+
+class DetailStoryVariants(JSONResponseMixin, DetailView):
+    model = Story
+    lookup_url_kwarg = 'story_pk'
+    template_name = 'story/story_part_variants.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DetailStoryVariants, self).get_context_data(**kwargs)
+        story = self.object
+
+        part_pk = self.kwargs.get('step_pk', False)
+        if part_pk:
+            part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
+        else:
+            raise Http404
+
+        context['part_original'] = part
+        context['part_variants'] = part.get_siblings(include_self=True)
+        return context
+
+    def render_to_response(self, context):
+        if self.request.is_ajax():
+            original_story = context['part_original']
+            part_variants = context['part_variants']
+            parts = []
+            for part in part_variants:
+                parts.append({
+                    "id": part.pk,
+                    "url": reverse("story_detail_by_part", kwargs={"story_pk": context['story'].pk, "step_pk": part.pk}),
+                    "text": part.text
+                })
+            return self.render_to_json_response({
+                "part_original": {
+                    "id": original_story.pk
+                },
+                "part_variants": parts
+            })
+        else:
+            return super(DetailStoryVariants, self).render_to_response(context)
+
 
 class CreateStory(FormView):
     form_class = StoryForm
@@ -71,9 +113,6 @@ class CreateStory(FormView):
             part.session_key = anon_id
         
         story.save()
-        for tag in form.cleaned_data['tags']:
-            story.tags.add(tag)
-        
         
         part.story = story
         part.save()
