@@ -26,7 +26,7 @@ SECRET_KEY = 'slv_jgb+ry55d=1kh-2ecxs59ymw_+01wh!cj^rjji!%ng3(ev'
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'quantumlibrary.net',
+    'quantumlibrary.ru',
 ]
 
 
@@ -110,7 +110,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
 
