@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 from story.models import Story, StoryPart
 from vanilla import ListView, DetailView, FormView
-from taggit.utils import edit_string_for_tags
 from app.utils import JSONResponseMixin
 from .forms import StoryForm, StoryPartForm
 
@@ -187,7 +186,6 @@ class EditStory(FormView):
         data = {
             'title': story.title,
             'anotation': story.anotation,
-            'tags': edit_string_for_tags([o for o in story.tags.all()]),
             'text': story.get_first_part().text
         }
         form = self.get_form(data)
