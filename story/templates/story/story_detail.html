@@ -14,36 +14,36 @@
 
 {% block content %}
 <article class="uk-article">
-    <h1 class="uk-article-title">{{ story.title }}</h1>
+    <h1 class="uk-article-title">{{ story.title }}
     {% if story.creator == user %}
-        <a href="{% url 'story_edit' story.pk %}">
-            править
-        </a>
+        <a href="{% url 'story_edit' story.pk %}"><div class="uk-badge uk-badge-warning">
+            <i class="uk-icon-pencil-square-o"></i>
+            редактировать
+        </div></a>
     {% endif %}
+    </h1>
     {% for part in story_parts %}
         <div class="uk-panel uk-panel-hover" id="part-{{ part.pk }}">
             <div class="uk-panel-badge">
                 {% if part.author == user %}
                 <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
                 {% endif %}
-
-                {% if part.is_child_node %}
-                <a href="{% url 'story_part_create' story.pk part.parent.pk %}">
-                    <div class="uk-badge uk-badge-danger">
-                        <i class="uk-icon-code-fork"></i> предложить свою версию
-                    </div>
-                </a>
-                {% endif %}
                 {% if part.get_siblings %}
-                <a class="modal-story-variants-show" href="{% url 'story_detail_part_variants' story.pk part.pk %}" data-uk-modal='{"target":"#modal-story-variants"}'>
-                    <div class="uk-badge uk-badge-warning">
-                        <i class="uk-icon-sitemap"></i>
-                        алтернативные варианты
-                    </div>
-                </a>
+                <a 
+                    class="modal-story-variants-show" 
+                    href="{% url 'story_detail_part_variants' story.pk part.pk %}" 
+                    data-uk-modal='{"target":"#modal-story-variants"}'
+                ><div class="uk-badge uk-badge-warning">
+                    <i class="uk-icon-sitemap"></i>
+                    алтернативные варианты
+                </div></a>
+                {% endif %}
+                {% if part.is_child_node %}
+                <a href="{% url 'story_part_create' story.pk part.parent.pk %}"><div class="uk-badge uk-badge-danger">
+                    <i class="uk-icon-code-fork"></i> предложить свою версию
+                </div></a>
                 {% endif %}
             </div>
-
             <p>{{ part.text }}</p>
         </div>
     {% empty %}

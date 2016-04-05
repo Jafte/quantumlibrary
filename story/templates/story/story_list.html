@@ -4,8 +4,12 @@
 
 {% block title %}Список историй{% endblock %}
 
+{% block breadcrumbs_path %}
+    <li><a href="{% url 'story_list' %}">Истории</a></li>
+{% endblock %}
+
 {% block breadcrumbs_active %}
-    <li class="active">Истории</li>
+    <li class="active">{{ breadcrumbs_active_title }}</li>
 {% endblock %}
 
 {% block content %}

@@ -22,23 +22,28 @@
             $.get(url, function(data) {
                     var html = "",
                         part_orginal_id = data.part_original.id;
+                    
                     html += '<div class="uk-modal-header"><h2>Доступные варианты</h2></div>';
+                    
                     $.each(data.part_variants, function( index, part ){
-                        html += '<div class="uk-panel uk-panel-hover" id="part-'+ part.id +'">';
+                        if (part_orginal_id != part.id) {
+                            html += '<a class="uk-panel uk-panel-hover" href="'+ part.url +'">';
+                        } else {
+                            html += '<div class="uk-panel uk-panel-hover" id="part-'+ part.id +'">';
+                        }
                         html += '<div class="uk-panel-badge">';
                         if (part_orginal_id == part.id) {
                             html += '<div class="uk-badge uk-badge-success"><i class="uk-icon-check"></i> выбранный вариант</div>';
-                        } else {
-                            html += '<a href="'+ part.url +'">';
-                            html += '<div class="uk-badge uk-badge-warning">';
-                            html += '<i class="uk-icon-level-down"></i> выбрать';
-                            html += '</div>';
-                            html += '</a>';
-                        };
+                        }
                         html += '</div>';
                         html += '<p>' + part.text + '</p>';
-                        html += '</div>';
+                        if (part_orginal_id != part.id) {
+                            html += '</a>';
+                        } else {
+                            html += '</div>';
+                        }
                     });
+                    
                     $('#modal-story-content').html(html);
                 }
             ).fail(function() {

@@ -4,23 +4,19 @@
 
 {% block title %}Карта истории: {{ story.title }}{% endblock %}
 
-{% block breadcrumbs %}
-    {{block.super}}
-    <i class="right chevron icon divider"></i>
-    <a href="{% url 'story_list' %}" class="section">Истории</a>
-    <i class="right chevron icon divider"></i>
-    <a href="{{ story.get_absolute_url }}" class="section">{{ story.title }}</a>
+{% block breadcrumbs_path %}
+    <li><a href="{% url 'story_list' %}">Истории</a></li>
+    <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
 {% endblock %}
 
 {% block breadcrumbs_active %}
-    <i class="right chevron icon divider"></i>
-    <div class="active section">Карта истории</div>
+    <li class="active">Карта истории</li>
 {% endblock %}
 
 {% block content %}
     <h1>{{ story.title }}</h1>
 
-    {{ root_story_line.get_family }}
+	
 {% endblock %}
 
 

@@ -11,11 +11,21 @@ class ListStories(ListView):
     model = Story
     queryset = Story.objects.filter(is_deleted=False).exclude(primary_story_line__isnull=True)
     template_name = 'story/story_list.html'
-
+    
+    def get_context_data(self, **kwargs):
+        context = super(ListStories, self).get_context_data(**kwargs)
+        context['breadcrumbs_active_title'] = u"Пишем"
+        return context
+        
 class ListFinishedStories(ListView):
     model = Story
     queryset = Story.objects.filter(is_deleted=False, is_finished=True).exclude(primary_story_line__isnull=True)
     template_name = 'story/story_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ListFinishedStories, self).get_context_data(**kwargs)
+        context['breadcrumbs_active_title'] = u"Читаем"
+        return context
 
 class DetailStory(DetailView):
     model = Story
