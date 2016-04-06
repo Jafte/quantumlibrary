@@ -138,24 +138,24 @@ class CreateStoryPart(FormView):
     def get_context_data(self, **kwargs):
         context = super(CreateStoryPart, self).get_context_data(**kwargs)
         
-        parent_part_pk = self.kwargs.get('step_pk', False)
+        part_pk = self.kwargs.get('step_pk', False)
         story_pk = self.kwargs.get('story_pk', False)
         
         story = get_object_or_404(Story, pk=story_pk)
-        parent_part = get_object_or_404(StoryPart.objects.filter(story=story), pk=parent_part_pk)
+        part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
         
         context['story'] = story
-        context['parent_part'] = parent_part
+        context['part'] = part
         
         return context
     
     def form_valid(self, form):
         context = self.get_context_data(form=form)
         story = context['story']
-        parent_part = context['parent_part']
+        current_part = context['part']
         
         part = StoryPart(
-                parent = parent_part,
+                parent = current_part.parent,
                 text = form.cleaned_data['text'],
             )
 

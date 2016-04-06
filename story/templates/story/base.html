@@ -27,9 +27,9 @@
                     
                     $.each(data.part_variants, function( index, part ){
                         if (part_orginal_id != part.id) {
-                            html += '<a class="uk-panel uk-panel-hover" href="'+ part.url +'">';
+                            html += '<a class="uk-panel uk-panel-hover uk-margin-bottom" href="'+ part.url +'">';
                         } else {
-                            html += '<div class="uk-panel uk-panel-hover" id="part-'+ part.id +'">';
+                            html += '<div class="uk-panel uk-panel-box uk-margin-bottom" id="part-'+ part.id +'">';
                         }
                         html += '<div class="uk-panel-badge">';
                         if (part_orginal_id == part.id) {
@@ -43,6 +43,10 @@
                             html += '</div>';
                         }
                     });
+                    
+                    html += '<div class="uk-modal-footer uk-text-large uk-text-center">';
+                    html += 'Учтите, что после выбора альтернативного варианта продолжение истории так же изменится.';
+                    html += '</div>';
                     
                     $('#modal-story-content').html(html);
                 }

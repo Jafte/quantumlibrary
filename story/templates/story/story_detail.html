@@ -6,10 +6,17 @@
 
 {% block breadcrumbs_path %}
     <li><a href="{% url 'story_list' %}">Истории</a></li>
+    {% if story.primary_story_line != primary_story_line %}
+    <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block breadcrumbs_active %}
+    {% if story.primary_story_line != primary_story_line %}
+    <li class="active">сюжет #{{ primary_story_line.pk }}</li>
+    {% else %}
     <li class="active">{{ story.title }}</li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -23,8 +30,8 @@
     {% endif %}
     </h1>
     {% for part in story_parts %}
-        <div class="uk-panel uk-panel-hover" id="part-{{ part.pk }}">
-            <div class="uk-panel-badge">
+        <div class="uk-panel-body uk-position-relative">
+            <div class="uk-position-top-right">
                 {% if part.author == user %}
                 <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
                 {% endif %}
@@ -39,7 +46,9 @@
                 </div></a>
                 {% endif %}
                 {% if part.is_child_node %}
-                <a href="{% url 'story_part_create' story.pk part.parent.pk %}"><div class="uk-badge uk-badge-danger">
+                <a 
+                    href="{% url 'story_part_create' story.pk part.pk %}"
+                ><div class="uk-badge uk-badge-danger">
                     <i class="uk-icon-code-fork"></i> предложить свою версию
                 </div></a>
                 {% endif %}
