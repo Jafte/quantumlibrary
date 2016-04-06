@@ -57,6 +57,7 @@ INSTALLED_APPS = (
 SITE_ID = 1
 
 MIDDLEWARE_CLASSES = (
+    'sslify.middleware.SSLifyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,6 +69,8 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'app.urls'
+
+SSLIFY_DISABLE = True
 
 TEMPLATES = [
     {

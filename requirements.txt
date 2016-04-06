@@ -13,3 +13,4 @@ oauthlib==1.0.3
 requests==2.9.1
 requests-oauthlib==0.6.1
 sqlparse==0.1.19
+django-sslify>=0.2.0
