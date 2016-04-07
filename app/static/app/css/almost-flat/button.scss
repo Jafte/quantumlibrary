@@ -68,7 +68,6 @@ $button-group-border:                           rgba(0,0,0,0.1);
 
 @mixin hook-button() {
     border: 1px solid $button-border;
-    border-radius: $global-border-radius;
     text-shadow: 0 1px 0 $button-text-shadow;
 }
 
@@ -130,7 +129,7 @@ $button-group-border:                           rgba(0,0,0,0.1);
 // Size modifiers
 // ========================================================================
 
-@mixin hook-button-large() { border-radius: $global-border-radius + 1; }
+@mixin hook-button-large() {}
 
 
 // Miscellaneous

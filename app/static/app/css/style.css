@@ -8457,7 +8457,6 @@ strong {
   white-space: nowrap;
   padding: 0 4px;
   border: 1px solid #ddd;
-  border-radius: 3px;
   background: #fafafa; }
 
 /*
@@ -8709,8 +8708,7 @@ pre {
   tab-size: 4;
   /* 1 */
   overflow: auto;
-  border: 1px solid #ddd;
-  border-radius: 3px; }
+  border: 1px solid #ddd; }
 
 /* Selection pseudo-element
  ========================================================================== */
@@ -11966,7 +11964,6 @@ select.uk-form-width-mini {
   text-decoration: none;
   text-align: center;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 4px;
   text-shadow: 0 1px 0 #fff; }
 
 .uk-button:not(:disabled) {
@@ -12114,8 +12111,7 @@ select.uk-form-width-mini {
   min-height: 40px;
   padding: 0 15px;
   line-height: 38px;
-  font-size: 16px;
-  border-radius: 5px; }
+  font-size: 16px; }
 
 /* Sub-object `uk-button-group`
  ========================================================================== */
@@ -14326,7 +14322,6 @@ select.uk-form-width-mini {
   vertical-align: middle;
   text-transform: none;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 2px;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1); }
 
 /*
@@ -16447,8 +16442,7 @@ a.uk-thumbnail:focus {
   border: 1px solid #ddd;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-  resize: both;
-  border-radius: 3px; }
+  resize: both; }
 
 .uk-scrollable-box > :last-child {
   margin-bottom: 0; }

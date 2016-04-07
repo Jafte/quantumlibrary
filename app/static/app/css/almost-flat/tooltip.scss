@@ -23,7 +23,6 @@ $tooltip-text-shadow:                           rgba(0,0,0,0.5);
 // ========================================================================
 
 @mixin hook-tooltip() {
-    border-radius: 3px;
     text-shadow: 0 1px 0 $tooltip-text-shadow;
 }
 
