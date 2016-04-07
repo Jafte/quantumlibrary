@@ -1,8 +1,8 @@
 @import "../../components/uikit/scss/uikit-mixins.scss";
+@import "../../components/uikit/scss/uikit-variables.scss";
 
 @import "./local-variables.scss";
-
-@import "../../components/uikit/scss/uikit.scss";
-@import "./almost-flat/uikit.scss";
-
 @import "./local-style.scss";
+
+@import "./almost-flat/uikit.scss";
+@import "../../components/uikit/scss/uikit.scss";
