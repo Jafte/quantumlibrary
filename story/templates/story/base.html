@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="uk-grid">
+    <div class="uk-width-1-10">
+        {% block left_line %}{% endblock %}
+    </div>
+    <div class="uk-width-9-10">
+        {% block mid_line %}{% endblock %}
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_body %}
@@ -23,7 +31,7 @@
                     var html = "",
                         part_orginal_id = data.part_original.id;
                     
-                    html += '<div class="uk-modal-header"><h2>Доступные варианты</h2></div>';
+                    html += '<div class="uk-modal-header"><h2>Доступные версии</h2></div>';
                     
                     $.each(data.part_variants, function( index, part ){
                         if (part_orginal_id != part.id) {
@@ -45,7 +53,7 @@
                     });
                     
                     html += '<div class="uk-modal-footer uk-text-large uk-text-center">';
-                    html += 'Учтите, что после выбора альтернативного варианта продолжение истории так же изменится.';
+                    html += 'Учтите, что после выбора альтернативной версии эпизода вся последующая история так же изменится.';
                     html += '</div>';
                     
                     $('#modal-story-content').html(html);

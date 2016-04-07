@@ -4,16 +4,7 @@
 
 {% block title %}{{ story.title }}{% endblock %}
 
-{% block breadcrumbs_path %}
-    <li><a href="{% url 'story_list' %}">Истории</a></li>
-    <li><a href="{{ part_original.get_absolute_url }}">{{ story.title }}</a></li>
-{% endblock %}
-
-{% block breadcrumbs_active %}
-    <li class="active">Сюжет #{{ part_original.pk }}</li>
-{% endblock %}
-
-{% block content %}
+{% block mid_line %}
 <article class="uk-article">
     <h1 class="uk-article-title">{{ story.title }}</h1>
 
@@ -25,13 +16,13 @@
         {% endif %}
             <div class="uk-panel-badge">
                 {% if part.author == user %}
-                    <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
+                    <div class="uk-badge uk-badge-success">вы автор эпизода</div>
                 {% endif %}
 
                 {% if part == part_original %}
                     <div class="uk-badge uk-badge-success">
                         <i class="uk-icon-check"></i>
-                        активная сюжетная линия
+                        сюжетный эпизод
                     </div>
                 {% endif %}
             </div>

@@ -2,32 +2,10 @@
 
 {% block title %}
     {% if story %}
-        {{ story.title }}{% if part %} :: новая часть{% endif %}
+        {{ story.title }}{% if part %} :: новый эпизод{% endif %}
     {% else %}
         Новая история
     {% endif %}
-{% endblock %}
-
-{% block breadcrumbs_path %}
-    <li>
-    	<a href="{% url 'story_list' %}">Истории</a>
-	</li>
-    {% if story %}
-    <li>
-    	<a href="{{ story.get_absolute_url }}">{{ story.title }}</a>
-	</li>
-    {% if part %}
-    <li>
-    	<a href="{{ part.get_absolute_url }}">сюжет #{{ part.pk }}</a>
-	</li>
-    {% endif %}
-    {% endif %}
-{% endblock %}
-
-{% block breadcrumbs_active %}
-	<li>
-    	Покои создателя
-	</li>
 {% endblock %}
 
 {% block content %}
@@ -69,7 +47,7 @@
         <div class="uk-width-medium-2-3 uk-pull-1-3">
             <h1>
                 {% if story %}
-                    {{ story.title }}{% if part %} :: новая часть{% endif %}
+                    {{ story.title }}{% if part %} :: новый эпизод{% endif %}
                 {% else %}
                     Новая история
                 {% endif %}
@@ -77,7 +55,7 @@
 
             {% if part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom">
-                <h5 class="uk-panel-title">Предыдущий блок:</h5>
+                <h5 class="uk-panel-title">Предыдущий эпизоод:</h5>
                 <p>{{ part.parent.text }}</p>
             </div>
             {% endif %}
@@ -105,7 +83,7 @@
             </form>
             {% if part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom  uk-margin-top">
-                <h5 class="uk-panel-title">Вы пишите альтернативу блоку:</h5>
+                <h5 class="uk-panel-title">Вы пишите альтернативу эпизоду:</h5>
                 <p>{{ part.text }}</p>
                 {% if part.get_siblings %}
                 <p class="uk-mutted">

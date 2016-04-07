@@ -83,15 +83,7 @@
                 {{ message }}
             </div>
             {% endfor %}
-
-            {% block breadcrumbs %}
-            <ul class="uk-breadcrumb uk-margin-bottom">
-                <li><a href="/">Главная</a></li>
-                {% block breadcrumbs_path %}{% endblock %}
-                {% block breadcrumbs_active %}{% endblock %}
-            </ul>
-            {% endblock %}
-
+                
             {% block content %}{% endblock %}
         </div>
 		

@@ -4,56 +4,48 @@
 
 {% block title %}{{ story.title }}{% endblock %}
 
-{% block breadcrumbs_path %}
-    <li><a href="{% url 'story_list' %}">Истории</a></li>
-    {% if story.primary_story_line != primary_story_line %}
-    <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
-    {% endif %}
-{% endblock %}
-
-{% block breadcrumbs_active %}
-    {% if story.primary_story_line != primary_story_line %}
-    <li class="active">сюжет #{{ primary_story_line.pk }}</li>
-    {% else %}
-    <li class="active">{{ story.title }}</li>
-    {% endif %}
-{% endblock %}
-
-{% block content %}
+{% block mid_line %}{% spaceless %}
 <article class="uk-article">
     <h1 class="uk-article-title">{{ story.title }}
     {% if story.creator == user %}
-        <a href="{% url 'story_edit' story.pk %}"><div class="uk-badge uk-badge-warning">
-            <i class="uk-icon-pencil-square-o"></i>
-            редактировать
-        </div></a>
+        <a href="{% url 'story_edit' story.pk %}" title="редактировать">
+            <div class="uk-badge uk-badge-warning">
+                <i class="uk-icon-pencil-square-o"></i>
+            </div>
+        </a>
     {% endif %}
     </h1>
     {% for part in story_parts %}
-        <div class="uk-panel-body uk-position-relative">
+        <div class="uk-position-relative" style="padding: 20px 0;">
             <div class="uk-position-top-right">
+            
                 {% if part.author == user %}
-                <div class="uk-badge uk-badge-success">вы создатель отрывка</div>
+                <div class="uk-badge uk-badge-success">вы автор эпизода</div>
                 {% endif %}
                 {% if part.get_siblings %}
                 <a 
                     class="modal-story-variants-show" 
                     href="{% url 'story_detail_part_variants' story.pk part.pk %}" 
                     data-uk-modal='{"target":"#modal-story-variants"}'
-                ><div class="uk-badge uk-badge-warning">
-                    <i class="uk-icon-sitemap"></i>
-                    алтернативные варианты
-                </div></a>
+                    title="алтернативные варианты"
+                >
+                    <div class="uk-badge uk-badge-warning">
+                        <i class="uk-icon-sitemap"></i>
+                    </div>
+                </a>
                 {% endif %}
                 {% if part.is_child_node %}
                 <a 
                     href="{% url 'story_part_create' story.pk part.pk %}"
-                ><div class="uk-badge uk-badge-danger">
-                    <i class="uk-icon-code-fork"></i> предложить свою версию
-                </div></a>
+                    title="предложить свою версию"
+                >
+                    <div class="uk-badge uk-badge-danger">
+                        <i class="uk-icon-code-fork"></i>
+                    </div>
+                </a>
                 {% endif %}
             </div>
-            <p>{{ part.text }}</p>
+            {{ part.text }}
         </div>
     {% empty %}
         <div class="uk-panel uk-panel-box">
@@ -61,8 +53,10 @@
         </div>
     {% endfor %}
     <hr class="uk-article-divider" />
-    <a class="uk-button" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
-        продолжить историю
-    </a>
+    <div class="uk-width-1-2 uk-container-center uk-text-center">
+        <a class="uk-button uk-width-1-1" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
+            продолжить историю
+        </a>
+    </div>
 </article>
-{% endblock %}
+{% endspaceless %} {% endblock %}

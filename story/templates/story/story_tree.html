@@ -4,16 +4,7 @@
 
 {% block title %}Карта истории: {{ story.title }}{% endblock %}
 
-{% block breadcrumbs_path %}
-    <li><a href="{% url 'story_list' %}">Истории</a></li>
-    <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
-{% endblock %}
-
-{% block breadcrumbs_active %}
-    <li class="active">Карта истории</li>
-{% endblock %}
-
-{% block content %}
+{% block mid_line %}
     <h1>{{ story.title }}</h1>
 
 	
