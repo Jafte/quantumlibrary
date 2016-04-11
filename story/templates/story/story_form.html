@@ -56,7 +56,7 @@
             {% if part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom">
                 <h5 class="uk-panel-title">Предыдущий эпизоод:</h5>
-                <p>{{ part.parent.text }}</p>
+                <p>{{ part.parent.text.text }}</p>
             </div>
             {% endif %}
             <form action="." method="post" class="uk-form uk-form-stacked">
@@ -84,7 +84,7 @@
             {% if part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom  uk-margin-top">
                 <h5 class="uk-panel-title">Вы пишите альтернативу эпизоду:</h5>
-                <p>{{ part.text }}</p>
+                <p>{{ part.text.text }}</p>
                 {% if part.get_siblings %}
                 <p class="uk-mutted">
                     <a href="{% url 'story_detail_part_variants' story.pk part.pk %}">другие альтернативы</a>

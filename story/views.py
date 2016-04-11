@@ -2,7 +2,7 @@ import random
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from story.models import Story, StoryPart
+from story.models import Story, StoryPart, TextBlock
 from vanilla import ListView, DetailView, FormView
 from app.utils import JSONResponseMixin
 from .forms import StoryForm, StoryPartForm
@@ -153,29 +153,35 @@ class CreateStoryPart(FormView):
         context = self.get_context_data(form=form)
         story = context['story']
         current_part = context['part']
+
+        text_block = TextBlock(
+            text=form.cleaned_data['text'],
+        )
         
         part = StoryPart(
                 parent = current_part.parent,
-                text = form.cleaned_data['text'],
             )
 
         if self.request.user.is_authenticated():
-            part.author = self.request.user
+            text_block.author = self.request.user
         else:
             anon_id = self.request.session.get('anon_id', False)
             if not anon_id:
                 anon_id = hex(random.getrandbits(128))[2:-1]
                 self.request.session['anon_id'] = anon_id
 
-            part.session_key = anon_id
+            text_block.session_key = anon_id
         
+        text_block.story = story
+        text_block.save()
+
         part.story = story
+        part.text = text_block
         part.save()
 
-        parent_part.update_primary_story_line(part)
+        current_part.parent.update_primary_story_line(part)
 
-    
-        if (parent_part == story.primary_story_line):
+        if (current_part.parent == story.primary_story_line):
             story.primary_story_line = part
             story.save()
         
