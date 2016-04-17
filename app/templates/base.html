@@ -18,18 +18,15 @@
 				{% activeurl menu="true" parent_tag="li" css_class="uk-active" %}
                 <ul class="uk-navbar-nav uk-hidden-small">
                     <li>
-                        <a href="{% url 'story_reading_list' %}">
-                            Читальный зал
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'story_list' %}">
-                            Мастерские
-                        </a>
-                    </li>
-                    <li>
                         <a href="{% url 'story_create' %}">
+                            <i class="uk-icon-pencil"></i>
                             Новая история
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'story_reading_list' %}">
+                            <i class="uk-icon-book"></i>
+                            Читальный зал
                         </a>
                     </li>
                 </ul>

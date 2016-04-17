@@ -7,21 +7,19 @@
 {% block mid_line %}
     <h1>Квантовые истории</h1>
     {% for story in story_list %}
-    <div class="uk-panel uk-panel-box">
-        <h4 class="uk-panel-title">
-            <a href="{{ story.get_absolute_url }}">
-                {{ story.title }}
-            </a>
-        </h4>
-        {% if story.anotation %}
-        <p>{{ story.anotation }}</p>
+    <h4>
+        <a href="{{ story.get_absolute_url }}">
+            {{ story.title }}
+        </a>
+    </h4>
+    {% if story.anotation %}
+    <p>{{ story.anotation }}</p>
+    {% endif %}
+    <div class="uk-text-muted">
+        {{ story.created }}
+        {% if story.creator %}
+        от {% user_display story.creator %}
         {% endif %}
-        <div class="uk-text-muted">
-            {{ story.created }}
-            {% if story.creator %}
-            от {% user_display story.creator %}
-            {% endif %}
-        </div>
     </div>
     {% endfor %}
 {% endblock %}
