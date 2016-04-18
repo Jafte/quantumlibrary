@@ -38,9 +38,9 @@ class DetailStory(DetailView):
         story = self.object
         
         part_pk = self.kwargs.get('step_pk', False)
-        root_part = get_object_or_404(StoryPart.objects.filter(story=story), level=0)
+        root_part = get_object_or_404(StoryPart.objects.filter(story=story), level = 0)
         if part_pk:
-            part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
+            part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
             if part.primary_story_line:
                 part = part.primary_story_line
         else:
@@ -66,7 +66,7 @@ class DetailStoryVariants(JSONResponseMixin, DetailView):
 
         part_pk = self.kwargs.get('step_pk', False)
         if part_pk:
-            part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
+            part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
         else:
             raise Http404
 
@@ -105,13 +105,14 @@ class CreateStory(FormView):
                 anotation = form.cleaned_data['anotation'],
             )
 
-        part = StoryPart(
-                text = form.cleaned_data['text'],
-            )
+        text_block = TextBlock(
+            text = form.cleaned_data['text'],
+        )
+        part = StoryPart()
 
         if self.request.user.is_authenticated():
             story.creator = self.request.user
-            part.author = self.request.user
+            text_block.author = self.request.user
         else:
             anon_id = self.request.session.get('anon_id', False)
             if not anon_id:
@@ -119,11 +120,15 @@ class CreateStory(FormView):
                 self.request.session['anon_id'] = anon_id
 
             story.session_key = anon_id
-            part.session_key = anon_id
+            text_block.session_key = anon_id
         
         story.save()
         
+        text_block.story = story
+        text_block.save()
+        
         part.story = story
+        part.text = text_block
         part.save()
     
         story.primary_story_line = part
@@ -134,6 +139,7 @@ class CreateStory(FormView):
 class CreateStoryPart(FormView):
     form_class = StoryPartForm
     template_name = 'story/story_form.html'
+    view_mode = 'variant'
     
     def get_context_data(self, **kwargs):
         context = super(CreateStoryPart, self).get_context_data(**kwargs)
@@ -141,25 +147,31 @@ class CreateStoryPart(FormView):
         part_pk = self.kwargs.get('step_pk', False)
         story_pk = self.kwargs.get('story_pk', False)
         
-        story = get_object_or_404(Story, pk=story_pk)
-        part = get_object_or_404(StoryPart.objects.filter(story=story), pk=part_pk)
+        story = get_object_or_404(Story, pk = story_pk)
+        part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
         
+        if self.view_mode == 'variant':
+            context['current_part'] = part
+            context['parent_part'] = part.parent
+        else:
+            context['current_part'] = False
+            context['parent_part'] = part
+            
         context['story'] = story
-        context['part'] = part
-        
+
         return context
     
     def form_valid(self, form):
         context = self.get_context_data(form=form)
         story = context['story']
-        current_part = context['part']
+        parent_part = context['parent_part']
 
         text_block = TextBlock(
             text=form.cleaned_data['text'],
         )
         
         part = StoryPart(
-                parent = current_part.parent,
+                parent = parent_part,
             )
 
         if self.request.user.is_authenticated():
@@ -179,9 +191,9 @@ class CreateStoryPart(FormView):
         part.text = text_block
         part.save()
 
-        current_part.parent.update_primary_story_line(part)
+        parent_part.update_primary_story_line(part)
 
-        if (current_part.parent == story.primary_story_line):
+        if (parent_part == story.primary_story_line):
             story.primary_story_line = part
             story.save()
         

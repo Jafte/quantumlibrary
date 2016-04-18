@@ -4,59 +4,88 @@
 
 {% block title %}{{ story.title }}{% endblock %}
 
-{% block mid_line %}{% spaceless %}
-<article class="uk-article">
-    <h1 class="uk-article-title">{{ story.title }}
+{% block content %}
+<div class="uk-grid uk-grid-small">
+    <div class="uk-push-1-10 uk-width-9-10">
+    <h1>{{ story.title }}</h1>
     {% if story.creator == user %}
+    <div class="uk-text-mutted">
         <a href="{% url 'story_edit' story.pk %}" title="редактировать">
             <div class="uk-badge uk-badge-warning">
                 <i class="uk-icon-pencil-square-o"></i>
+                редактировать
             </div>
-        </a>
-    {% endif %}
-    </h1>
-    {% for part in story_parts %}
-        <div class="uk-position-relative" style="padding: 20px 0;">
-            <div class="uk-position-top-right">
-            
-                {% if part.author == user %}
-                <div class="uk-badge uk-badge-success">вы автор эпизода</div>
-                {% endif %}
-                {% if part.get_siblings %}
-                <a 
-                    class="modal-story-variants-show" 
-                    href="{% url 'story_detail_part_variants' story.pk part.pk %}" 
-                    data-uk-modal='{"target":"#modal-story-variants"}'
-                    title="алтернативные варианты"
-                >
-                    <div class="uk-badge uk-badge-warning">
-                        <i class="uk-icon-sitemap"></i>
-                    </div>
-                </a>
-                {% endif %}
-                {% if part.is_child_node %}
-                <a 
-                    href="{% url 'story_part_create' story.pk part.pk %}"
-                    title="предложить свою версию"
-                >
-                    <div class="uk-badge uk-badge-danger">
-                        <i class="uk-icon-code-fork"></i>
-                    </div>
-                </a>
-                {% endif %}
-            </div>
-            {{ part.text.text }}
-        </div>
-    {% empty %}
-        <div class="uk-panel uk-panel-box">
-            <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
-        </div>
-    {% endfor %}
-    <hr class="uk-article-divider" />
-    <div class="uk-width-1-2 uk-container-center uk-text-center">
-        <a class="uk-button uk-width-1-1" href="{% url 'story_part_create' story.pk primary_story_line.pk %}">
-            продолжить историю
         </a>
     </div>
-</article>
-{% endspaceless %} {% endblock %}
+    {% endif %}
+    </div>
+    
+    <div class="uk-width-1-1">
+    {% spaceless %}
+    {% for part in story_parts %}
+        <div class="uk-grid uk-grid-small uk-margin-top" data-uk-grid-match>
+            <div class="uk-width-1-10uk-position-relative">
+                <div class="uk-position-bottom-right">
+                {% if part.parent %}
+                <div class="uk-text-right">
+                    <button class="uk-button uk-button-small">
+                        <i class="uk-icon-thumbs-up"></i>
+                        20
+                    </button>
+                </div>
+                {% endif %}
+                </div>
+            </div>
+            <div class="uk-width-medium-7-10 uk-width-small-9-10">
+                {{ part.text.text }}
+            </div>
+            <div class="uk-width-medium-2-10 uk-width-small-1-1">
+            {% if part.parent %}
+                <div class="uk-margin-bottom">
+                    {% if part.get_siblings %}
+                    <a 
+                        class="modal-story-variants-show uk-button uk-button-mini uk-button-warning" 
+                        href="{% url 'story_detail_part_variants' story.pk part.pk %}" 
+                        data-uk-modal='{"target":"#modal-story-variants"}'
+                    >
+                        <i class="uk-icon-sitemap"></i>
+                        алтернативные варианты
+                    </a>
+                    {% endif %}
+                    {% if part.is_child_node %}
+                    <a 
+                        class="uk-button uk-button-mini uk-button-danger"
+                        href="{% url 'story_part_create_variant' story.pk part.pk %}"
+                    >
+                        <i class="uk-icon-code-fork"></i>
+                        предложить свою версию
+                    </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+                <div class="uk-text-muted uk-text-small">
+                    написал {% if part.text.author %}{{ part.text.author }}{% else %}аноним{% endif %}<br/>
+                    {{ part.text.created|timesince }} назад
+                </div>
+            </div>
+        </div>
+        {% empty %}
+            <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
+        {% endfor %}
+        <div class="uk-grid">
+            <div class="uk-push-1-10 uk-width-7-10">
+                <div class="uk-width-1-2 uk-container-center uk-text-center">
+                    <a class="uk-button uk-width-1-1" href="{% url 'story_part_create_next' story.pk primary_story_line.pk %}">
+                        продолжить историю
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endspaceless %}
+    </div>
+</div>
+{% endblock %}
+
+{% block right_line %}{% spaceless %}
+
+{% endspaceless %}{% endblock %}

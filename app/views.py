@@ -3,11 +3,11 @@ from story.models import Story, StoryPart
 from django.views.generic import TemplateView
 
 class AppIndex(TemplateView):
-    template_name = "index.html"
+    template_name = "story/story_list.html"
     
     def get_context_data(self, **kwargs):
         context = super(AppIndex, self).get_context_data(**kwargs)
-        context["story_list"] = Story.objects.filter(is_deleted=False, is_finished=False).exclude(primary_story_line__isnull=True)
+        context["story_list"] = Story.objects.filter(is_deleted=False, is_finished=False).exclude(primary_story_line__isnull=True)[:15]
         return context
 
 class UserProfile(TemplateView):

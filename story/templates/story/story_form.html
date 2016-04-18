@@ -2,22 +2,36 @@
 
 {% block title %}
     {% if story %}
-        {{ story.title }}{% if part %} :: новый эпизод{% endif %}
+        {{ story.title }}{% if current_part or parent_part %} :: новый эпизод{% endif %}
     {% else %}
         Новая история
     {% endif %}
 {% endblock %}
 
+
 {% block content %}
+    <h1>
+        {% if story %}
+            {{ story.title }}{% if current_part or parent_part %} :: новый эпизод{% endif %}
+        {% else %}
+            Новая история
+        {% endif %}
+    </h1>
     <div class="uk-grid">
 		<div class="uk-width-medium-1-3 uk-push-2-3">
 			<div class="uk-panel uk-panel-box uk-panel-box-primary">
-	            {% if story and part %}
+	            {% if story and current_part %}
+                <h3 class="uk-panel-title">
+                    При создании альтернатив<br>
+                    следует помнить
+                </h3>
+                {% elif story and parent_part %}
 	            <h3 class="uk-panel-title">
                     При продолжении истории<br>
                     следует помнить
                 </h3>
-	            {% else %}
+	            
+                {% else %}
 	            <h3 class="uk-panel-title">
                     При создании новой истории<br>
                     следует помнить
@@ -45,18 +59,10 @@
             </div>
         </div>
         <div class="uk-width-medium-2-3 uk-pull-1-3">
-            <h1>
-                {% if story %}
-                    {{ story.title }}{% if part %} :: новый эпизод{% endif %}
-                {% else %}
-                    Новая история
-                {% endif %}
-            </h1>
-
-            {% if part %}
+            {% if parent_part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom">
                 <h5 class="uk-panel-title">Предыдущий эпизоод:</h5>
-                <p>{{ part.parent.text.text }}</p>
+                <p>{{ parent_part.text.text }}</p>
             </div>
             {% endif %}
             <form action="." method="post" class="uk-form uk-form-stacked">
@@ -65,10 +71,10 @@
                     {% if story %}
                     <a 
                         class="uk-button uk-button-secondary uk-margin-right" 
-                        {% if not part %}
+                        {% if not current_part %}
                         href="{{ story.get_absolute_url }}"
                         {% else %}
-                        href="{{ part.get_absolute_url }}"
+                        href="{{ current_part.get_absolute_url }}"
                         {% endif %}
                     >
                         <i class="uk-icon-arrow-left"></i>
@@ -81,13 +87,13 @@
                     </button>
                 </div>
             </form>
-            {% if part %}
+            {% if current_part %}
             <div class="uk-panel uk-panel-box uk-margin-bottom  uk-margin-top">
                 <h5 class="uk-panel-title">Вы пишите альтернативу эпизоду:</h5>
-                <p>{{ part.text.text }}</p>
-                {% if part.get_siblings %}
+                <p>{{ current_part.text.text }}</p>
+                {% if current_part.get_siblings %}
                 <p class="uk-mutted">
-                    <a href="{% url 'story_detail_part_variants' story.pk part.pk %}">другие альтернативы</a>
+                    <a href="{% url 'story_detail_part_variants' story.pk current_part.pk %}">другие альтернативы</a>
                 </p>
                 {% endif %}
             </div>

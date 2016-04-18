@@ -4,9 +4,20 @@
 
 {% block title %}Список историй{% endblock %}
 
-{% block mid_line %}
-    <h1>Квантовые истории</h1>
+{% block content %}
+<div class="uk-grid">
     {% for story in story_list %}
+    <div class="uk-width-1-10 uk-position-relative">
+        <div class="uk-position-bottom-right">
+            <div class="uk-text-right">
+                <button class="uk-button uk-button-small">
+                    <i class="uk-icon-thumbs-up"></i>
+                    20
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="uk-width-9-10">
     <h4>
         <a href="{{ story.get_absolute_url }}">
             {{ story.title }}
@@ -16,10 +27,10 @@
     <p>{{ story.anotation }}</p>
     {% endif %}
     <div class="uk-text-muted">
-        {{ story.created }}
-        {% if story.creator %}
-        от {% user_display story.creator %}
-        {% endif %}
+        написал {% if story.creator %}{% user_display story.creator %}{% else %}аноним{% endif %}
+        {{ story.created|timesince }} назад
+    </div>
     </div>
     {% endfor %}
+</div>
 {% endblock %}
