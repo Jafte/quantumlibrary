@@ -83,7 +83,7 @@ class DetailStoryVariants(JSONResponseMixin, DetailView):
                 parts.append({
                     "id": part.pk,
                     "url": reverse("story_detail_by_part", kwargs={"story_pk": context['story'].pk, "step_pk": part.pk}),
-                    "text": part.text
+                    "text": part.text_block.text
                 })
             return self.render_to_json_response({
                 "part_original": {
@@ -128,7 +128,7 @@ class CreateStory(FormView):
         text_block.save()
         
         part.story = story
-        part.text = text_block
+        part.text_block = text_block
         part.save()
     
         story.primary_story_line = part
@@ -188,7 +188,7 @@ class CreateStoryPart(FormView):
         text_block.save()
 
         part.story = story
-        part.text = text_block
+        part.text_block = text_block
         part.save()
 
         parent_part.update_primary_story_line(part)

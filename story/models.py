@@ -50,12 +50,26 @@ class TextBlock(models.Model):
     def __str__(self):
         return "%s in %s" % (self.id, self.story)
 
+@python_2_unicode_compatible
+class TextBlockVersion(models.Model):
+    text_block = models.ForeignKey(TextBlock, verbose_name=_('Text Block'), related_name="+")
+    author = models.ForeignKey(User, verbose_name=_('Author'), related_name="part_versions", blank=True, null=True)
+    session_key = models.CharField(max_length=200, verbose_name=_('Session key'), blank=True)
+    text = models.TextField(verbose_name=_('Text'))
+    diff = models.TextField(verbose_name=_('Diff'))
+    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = _('text block versions')
+
+    def __str__(self):
+        return "%s for %s" % (self.id, self.text_block)
 
 @python_2_unicode_compatible
 class StoryPart(MPTTModel):
     story = models.ForeignKey(Story, verbose_name=_('Story'), related_name="+")
     parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
-    text = models.ForeignKey(TextBlock, verbose_name=_('Text'), related_name="+")
+    text_block = models.ForeignKey(TextBlock, verbose_name=_('Text'), related_name="+")
     is_primary = models.BooleanField(verbose_name=_('Is primary'), default=False)
     is_deleted = models.BooleanField(verbose_name=_('Is deleted'), default=False)
     primary_story_line = models.ForeignKey('self', verbose_name=_('Primary story line'), related_name="+", blank=True, null=True)

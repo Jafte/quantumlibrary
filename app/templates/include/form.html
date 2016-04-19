@@ -5,6 +5,24 @@
 {% endfor %}
 {% for field in form.visible_fields %}
     <div class="uk-form-row">
+    {% if field|widget_type == "checkboxinput" %}
+        <div class="uk-form-controls">
+            {{ field|add_error_class:"uk-form-danger" }}
+            <label for="{{ field.id_for_label }}">
+                {{ field.label }}
+            </label>
+            {% if field.help_text %}
+            <p class="uk-form-help-block">{{ field.help_text|safe }}</p>
+            {% endif %}
+            {% if field.errors %}
+                {% for error in field.errors %}
+                <p class="uk-form-help-block uk-alert uk-alert-danger">
+                    {{ error }}
+                </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% else %}
         <label class="uk-form-label" for="{{ field.id_for_label }}">
             {{ field.label }}
         </label>
@@ -21,6 +39,7 @@
                 {% endfor %}
             {% endif %}
         </div>
+    {% endif %}
     </div>
 {% endfor %}
 {% if form.non_field_errors %}

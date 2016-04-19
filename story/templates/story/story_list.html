@@ -1,6 +1,6 @@
 {% extends "story/base.html" %}
 
-{% load account %}
+{% load account humanize %}
 
 {% block title %}Список историй{% endblock %}
 
@@ -28,7 +28,7 @@
     {% endif %}
     <div class="uk-text-muted">
         написал {% if story.creator %}{% user_display story.creator %}{% else %}аноним{% endif %}
-        {{ story.created|timesince }} назад
+        {{ story.created|naturaltime }}
     </div>
     </div>
     {% endfor %}
