@@ -1,11 +1,11 @@
-import random
+import random, diff_match_patch
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
-from story.models import Story, StoryPart, TextBlock
 from vanilla import ListView, DetailView, FormView
 from app.utils import JSONResponseMixin
 from .forms import StoryForm, StoryPartForm
+from .models import Story, StoryPart, TextBlock, TextBlockVersion
 
 class ListStories(ListView):
     model = Story
@@ -150,13 +150,14 @@ class CreateStoryPart(FormView):
         story = get_object_or_404(Story, pk = story_pk)
         part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
         
-        if self.view_mode == 'variant':
+        if self.view_mode == 'variant' or self.view_mode == 'modify':
             context['current_part'] = part
             context['parent_part'] = part.parent
         else:
             context['current_part'] = False
             context['parent_part'] = part
-            
+
+        context['view_mode'] = self.view_mode
         context['story'] = story
 
         return context
@@ -165,38 +166,68 @@ class CreateStoryPart(FormView):
         context = self.get_context_data(form=form)
         story = context['story']
         parent_part = context['parent_part']
+        current_part = context['current_part']
 
-        text_block = TextBlock(
-            text=form.cleaned_data['text'],
-        )
-        
-        part = StoryPart(
-                parent = parent_part,
+        if self.view_mode == "modify":
+            diff_obj = diff_match_patch.diff_match_patch()
+            
+            text_block = current_part.text_block
+            
+            text_block_version = TextBlockVersion(
+                text = form.cleaned_data['text'],
+                text_block = text_block
             )
+            
+            if self.request.user.is_authenticated():
+                text_block_version.author = self.request.user
+            else:
+                anon_id = self.request.session.get('anon_id', False)
+                if not anon_id:
+                    anon_id = hex(random.getrandbits(128))[2:-1]
+                    self.request.session['anon_id'] = anon_id
 
-        if self.request.user.is_authenticated():
-            text_block.author = self.request.user
+                text_block_version.session_key = anon_id
+            
+            diffs = diff_obj.diff_main(text_block.text, text_block_version.text)
+            diff_obj.diff_cleanupSemantic(diffs)
+            text_block_version.diff = diff_obj.diff_toDelta(diffs)
+            
+            text_block_version.save()
+            
+            part = current_part
+            
         else:
-            anon_id = self.request.session.get('anon_id', False)
-            if not anon_id:
-                anon_id = hex(random.getrandbits(128))[2:-1]
-                self.request.session['anon_id'] = anon_id
-
-            text_block.session_key = anon_id
+            text_block = TextBlock(
+                text=form.cleaned_data['text'],
+            )
         
-        text_block.story = story
-        text_block.save()
+            part = StoryPart(
+                    parent = parent_part,
+                )
 
-        part.story = story
-        part.text_block = text_block
-        part.save()
+            if self.request.user.is_authenticated():
+                text_block.author = self.request.user
+            else:
+                anon_id = self.request.session.get('anon_id', False)
+                if not anon_id:
+                    anon_id = hex(random.getrandbits(128))[2:-1]
+                    self.request.session['anon_id'] = anon_id
 
-        parent_part.update_primary_story_line(part)
+                text_block.session_key = anon_id
+            
+            text_block.story = story
+            text_block.save()
 
-        if (parent_part == story.primary_story_line):
-            story.primary_story_line = part
-            story.save()
-        
+            part.story = story
+            part.text_block = text_block
+            part.save()
+
+            parent_part.update_primary_story_line(part)
+
+            if (parent_part == story.primary_story_line):
+                story.primary_story_line = part
+                story.save()
+            
         return HttpResponseRedirect(part.get_absolute_url())
 
 

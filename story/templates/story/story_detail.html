@@ -36,10 +36,10 @@
                 {% endif %}
                 </div>
             </div>
-            <div class="uk-width-medium-7-10 uk-width-small-9-10">
+            <div class="uk-width-8-10">
                 {{ part.text_block.text }}
             </div>
-            <div class="uk-width-medium-2-10 uk-width-small-1-1">
+            <div class="uk-width-1-10">
                 <div class="uk-margin-bottom">
                     {% if part.is_root_node %}
                     <div class="uk-badge">
@@ -50,11 +50,21 @@
                     <a 
                         class="uk-button uk-button-mini uk-button-danger"
                         href="{% url 'story_part_create_variant' story.pk part.pk %}"
-                        title="предложить свою версию" 
+                        title="новая сюжетная линия" 
                     >
                         <i class="uk-icon-code-fork"></i>
                     </a>
                     {% endif %}
+                    {% if part.is_child_node %}
+                    <a 
+                        class="uk-button uk-button-mini uk-button-danger"
+                        href="{% url 'story_part_modify_variant' story.pk part.pk %}"
+                        title="предложить версию" 
+                    >
+                        <i class="uk-icon-pencil-square-o"></i>
+                    </a>
+                    {% endif %}
+                    <br/>
                     {% if part.get_siblings %}
                     <a 
                         class="modal-story-variants-show uk-button uk-button-mini uk-button-warning" 
@@ -64,6 +74,17 @@
                     >
                         <i class="uk-icon-sitemap"></i>
                         {{ part.get_siblings.count }}
+                    </a>
+                    {% endif %}
+                    {% if part.text_block.variants.all %}
+                    <a 
+                        class="modal-story-variants-show uk-button uk-button-mini uk-button-warning" 
+                        href="{% url 'story_detail_part_modifications' story.pk part.pk %}" 
+                        data-uk-modal='{"target":"#modal-story-modifications"}'
+                        title="алтернативные варианты" 
+                    >
+                        <i class="uk-icon-clone"></i>
+                        {{ part.text_block.variants.all.count }}
                     </a>
                     {% endif %}
                 </div>
@@ -77,7 +98,7 @@
             <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
         {% endfor %}
         <div class="uk-grid">
-            <div class="uk-push-1-10 uk-width-7-10">
+            <div class="uk-push-1-10 uk-width-8-10">
                 <div class="uk-grid">
                     <div class="uk-width-3-5 uk-text-center">
                         <a class="uk-button uk-width-1-1" href="{% url 'story_part_create_next' story.pk primary_story_line.pk %}">

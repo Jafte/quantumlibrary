@@ -9,20 +9,15 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 @python_2_unicode_compatible
 class Story(models.Model):
-    creator = models.ForeignKey(User, verbose_name=_('Creator'), related_name="my_stories", blank=True, null=True)
-    authors = models.ManyToManyField(User, verbose_name=_('Authors'), related_name="stories", blank=True)
-    unknown_author_counter = models.IntegerField(verbose_name=_('Unknown author counter'), default=0)
-    session_key = models.CharField(max_length=200, verbose_name=_('Session key'), blank=True)
-    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
-    title = models.CharField(max_length=200, verbose_name=_('Title'))
-    anotation = models.TextField(verbose_name=_('Anotation'), blank=True)
-    is_finished = models.BooleanField(verbose_name=_('Is finished'), default=False)
-    is_deleted = models.BooleanField(verbose_name=_('Is deleted'), default=False)
-    has_question = models.BooleanField(verbose_name=_('Has question'), default=False)
-    question = models.TextField(verbose_name=_('Question'), blank=True)
-    primary_story_line = models.ForeignKey('StoryPart', verbose_name=_('Primary story line'), related_name="+", blank=True, null=True)
-    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
-    updated = models.DateTimeField(verbose_name=_('Updated'), auto_now_add=True)
+    creator = models.ForeignKey(User, verbose_name=_('creator'), related_name="my_stories", blank=True, null=True)
+    authors = models.ManyToManyField(User, verbose_name=_('authors'), related_name="stories", blank=True)
+    title = models.CharField(max_length=200, verbose_name=_('title'))
+    anotation = models.TextField(verbose_name=_('anotation'), blank=True)
+    is_finished = models.BooleanField(verbose_name=_('is finished'), default=False)
+    is_deleted = models.BooleanField(verbose_name=_('is deleted'), default=False)
+    primary_story_line = models.ForeignKey('StoryPart', verbose_name=_('primary story line'), related_name="+", blank=True, null=True)
+    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+    updated = models.DateTimeField(verbose_name=_('updated'), auto_now_add=True)
 
     class Meta:
         verbose_name_plural = _('stories')
@@ -37,43 +32,14 @@ class Story(models.Model):
         return reverse('story_detail', args=[str(self.pk)])
 
 @python_2_unicode_compatible
-class TextBlock(models.Model):
-    story = models.ForeignKey(Story, verbose_name=_('Story'), related_name="+")
-    author = models.ForeignKey(User, verbose_name=_('Author'), related_name="parts", blank=True, null=True)
-    session_key = models.CharField(max_length=200, verbose_name=_('Session key'), blank=True)
-    text = models.TextField(verbose_name=_('Text'))
-    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = _('text blocks')
-
-    def __str__(self):
-        return "%s in %s" % (self.id, self.story)
-
-@python_2_unicode_compatible
-class TextBlockVersion(models.Model):
-    text_block = models.ForeignKey(TextBlock, verbose_name=_('Text Block'), related_name="+")
-    author = models.ForeignKey(User, verbose_name=_('Author'), related_name="part_versions", blank=True, null=True)
-    session_key = models.CharField(max_length=200, verbose_name=_('Session key'), blank=True)
-    text = models.TextField(verbose_name=_('Text'))
-    diff = models.TextField(verbose_name=_('Diff'))
-    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
-
-    class Meta:
-        verbose_name_plural = _('text block versions')
-
-    def __str__(self):
-        return "%s for %s" % (self.id, self.text_block)
-
-@python_2_unicode_compatible
-class StoryPart(MPTTModel):
-    story = models.ForeignKey(Story, verbose_name=_('Story'), related_name="+")
-    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
-    text_block = models.ForeignKey(TextBlock, verbose_name=_('Text'), related_name="+")
-    is_primary = models.BooleanField(verbose_name=_('Is primary'), default=False)
-    is_deleted = models.BooleanField(verbose_name=_('Is deleted'), default=False)
-    primary_story_line = models.ForeignKey('self', verbose_name=_('Primary story line'), related_name="+", blank=True, null=True)
-    created = models.DateTimeField(verbose_name=_('Created'), auto_now_add=True)
+class StoryPart(models.Model):
+    story = models.ForeignKey(Story, verbose_name=_('story'), related_name="+")
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    text_block = models.ForeignKey(TextBlock, verbose_name=_('text'), related_name="+")
+    is_primary = models.BooleanField(verbose_name=_('is primary'), default=False)
+    is_deleted = models.BooleanField(verbose_name=_('is deleted'), default=False)
+    primary_story_line = models.ForeignKey('self', verbose_name=_('primary story line'), related_name="+", blank=True, null=True)
+    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     class MPTTMeta:
         order_insertion_by = ['created']
@@ -96,3 +62,37 @@ class StoryPart(MPTTModel):
         for p in StoryPart.objects.filter(primary_story_line = self):
             p.primary_story_line = part
             p.save()
+
+@python_2_unicode_compatible
+class TextBlock(models.Model):
+    story_part = models.ForeignKey(StoryPart, verbose_name=_('story part'), related_name="text_block")
+    author = models.ForeignKey(User, verbose_name=_('author'), related_name="parts", blank=True, null=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
+    diff = models.TextField(verbose_name=_('diff'))
+    text = models.TextField(verbose_name=_('text'))
+    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+
+    class Meta:
+        verbose_name_plural = _('text blocks')
+
+    def __str__(self):
+        return "%s in %s" % (self.id, self.story)
+
+@python_2_unicode_compatible
+class StoryLine(models.Model):
+    is_primary = models.BooleanField(verbose_name=_('is primary'), default=False)
+    created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
+    updated = models.DateTimeField(verbose_name=_('updated'), auto_now_add=True)
+    parts = models.ManyToManyField(StoryPart, verbose_name=_('parts'), related_name="stories", blank=True)
+
+    class Meta:
+        verbose_name_plural = _('stories')
+
+    def __str__(self):
+        return "#%s %s" % (self.id, self.title)
+
+    def get_first_part(self):
+        return StoryPart.objects.get(story=self, parent__isnull=True)
+
+    def get_absolute_url(self):
+        return reverse('story_detail', args=[str(self.pk)])

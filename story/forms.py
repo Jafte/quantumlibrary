@@ -8,4 +8,3 @@ class StoryForm(forms.Form):
 
 class StoryPartForm(forms.Form):
     text = forms.CharField(label=_('Text'), widget=forms.Textarea(attrs={'rows':15, 'cols':40}))
-    variant = forms.BooleanField(label=_('Variant'), widget=forms.CheckboxInput(), help_text=_("Save the narrative line (all subsequent episodes will be transferred)"))
