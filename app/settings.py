@@ -48,7 +48,6 @@ INSTALLED_APPS = (
 #    'cachalot',
     'debug_toolbar',
     'django_activeurl',
-    'mptt',
     'post_office',
     'widget_tweaks',
 
