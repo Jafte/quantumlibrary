@@ -22,7 +22,16 @@ class Story(models.Model):
         return "#%s %s" % (self.pk, self.title)
 
     def get_absolute_url(self):
-        return ""
+        return reverse('story_detail', args=[str(self.pk)])
+
+    def get_primary_story_line(self):
+        try:
+            story_line = self.story_lines.get(is_primary=True)
+        except (Model.DoesNotExist, Model.MultipleObjectsReturned) as e:
+            story_line = self.story_lines.all().first()
+
+        return story_line
+
 
 @python_2_unicode_compatible
 class StoryPart(models.Model):
@@ -43,7 +52,7 @@ class StoryPart(models.Model):
 
 @python_2_unicode_compatible
 class TextBlock(models.Model):
-    story_part = models.ForeignKey(StoryPart, verbose_name=_('story part'), related_name="text_block")
+    story_part = models.ForeignKey(StoryPart, verbose_name=_('story part'), related_name="text_blocks")
     author = models.ForeignKey(User, verbose_name=_('author'), related_name="parts", blank=True, null=True)
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     diff = models.TextField(verbose_name=_('diff'), blank=True)
@@ -61,7 +70,7 @@ class TextBlock(models.Model):
 
 @python_2_unicode_compatible
 class StoryLine(models.Model):
-    story = models.ForeignKey(Story, verbose_name=_('story'), related_name="+")
+    story = models.ForeignKey(Story, verbose_name=_('story'), related_name="story_lines")
     is_primary = models.BooleanField(verbose_name=_('is primary'), default=False)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
@@ -71,12 +80,12 @@ class StoryLine(models.Model):
     def __str__(self):
         return "%s line #%s" % (self.story, self.pk)
 
-    def get_parts(self):
-        return self.parts.objects.sort(story=self, parent__isnull=True)
-
     def get_absolute_url(self):
         return reverse('story_detail_line', args=[str(self.pk)])
-        
+
+    def get_last_part(self):
+        return self.parts.all().last()
+
 @python_2_unicode_compatible
 class StoryLinePart(models.Model):
     story_line = models.ForeignKey(StoryLine, verbose_name=_('story line'), related_name="parts")
@@ -94,3 +103,17 @@ class StoryLinePart(models.Model):
     def get_absolute_url(self):
         #return reverse('story_detail', args=[str(self.pk)])
         return ""
+
+    def get_all_lines_part(self):
+        story = self.story_line.story
+        story_part = self.story_part
+        return StoryPart.objects.filter(story=story, level=story_part.level)
+
+    def get_other_lines_parts(self):
+        return self.get_all_lines_part().exclude(pk=self.story_part.pk)
+
+    def get_all_text_block_variants(self):
+        return self.story_part.text_blocks.all()
+
+    def get_other_text_block_variants(self):
+        return self.get_all_text_block_variants().exclude(pk=self.text_block.pk)

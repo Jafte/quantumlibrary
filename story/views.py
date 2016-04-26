@@ -80,40 +80,42 @@ class EditStory(FormView):
 class DetailStoryLine(DetailView):
     model = StoryLine
     lookup_url_kwarg = 'line_pk'
-    template_name = 'story/story_line_detail.html'
+    template_name = 'story/story_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DetailStoryLine, self).get_context_data(**kwargs)
-
-        return context
+        kwargs['view'] = self
+        kwargs['story'] = self.object.story
+        kwargs['story_line'] = self.object
+        return kwargs
 
 class DetailStory(DetailView):
-    model = StoryLine
+    model = Story
     lookup_url_kwarg = 'story_pk'
     template_name = 'story/story_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DetailStory, self).get_context_data(**kwargs)
-
+        kwargs['view'] = self
+        kwargs['story_line'] = self.object.get_primary_story_line()
+        kwargs['story'] = self.object
         return context
 
-class DetailStoryVariants(JSONResponseMixin, DetailView):
-    model = Story
-    lookup_url_kwarg = 'story_pk'
+class DetailStoryLineVariants(JSONResponseMixin, DetailView):
+    model = StoryLine
+    lookup_url_kwarg = 'line_pk'
     template_name = 'story/story_part_variants.html'
 
     def get_context_data(self, **kwargs):
-        context = super(DetailStoryVariants, self).get_context_data(**kwargs)
-        story = self.object
+        context = super(DetailStoryLineVariants, self).get_context_data(**kwargs)
+        story = self.object.story
 
-        part_pk = self.kwargs.get('step_pk', False)
+        part_pk = self.kwargs.get('part_pk', False)
         if part_pk:
-            part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
+            story_line_part = get_object_or_404(StoryLinePart, pk = part_pk)
         else:
             raise Http404
 
-        context['part_original'] = part
-        context['part_variants'] = part.get_siblings(include_self=True)
+        context['part_original'] = story_line_part
+        context['part_variants'] = story_line_part.get_all_lines_part()
         return context
 
     def render_to_response(self, context):
@@ -121,12 +123,15 @@ class DetailStoryVariants(JSONResponseMixin, DetailView):
             original_story = context['part_original']
             part_variants = context['part_variants']
             parts = []
-            for part in part_variants:
-                parts.append({
-                    "id": part.pk,
-                    "url": reverse("story_detail_by_part", kwargs={"story_pk": context['story'].pk, "step_pk": part.pk}),
-                    "text": part.text_block.text
-                })
+            # for part in part_variants:
+            #     data = {
+            #         "id": part.pk,
+            #         "url": [],
+            #         "text": part.text_block.text
+            #     }
+            #
+            #     reverse("story_detail_line_part", kwargs={"story_pk": context['story_line'].pk, "part_pk": part.pk})
+            #     parts.append()
             return self.render_to_json_response({
                 "part_original": {
                     "id": original_story.pk
@@ -134,7 +139,7 @@ class DetailStoryVariants(JSONResponseMixin, DetailView):
                 "part_variants": parts
             })
         else:
-            return super(DetailStoryVariants, self).render_to_response(context)
+            return super(DetailStoryLineVariants, self).render_to_response(context)
 
 
 class CreateStoryPart(FormView):

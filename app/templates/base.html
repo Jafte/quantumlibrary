@@ -23,12 +23,6 @@
                             Новая история
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'story_reading_list' %}">
-                            <i class="uk-icon-book"></i>
-                            Читальный зал
-                        </a>
-                    </li>
                 </ul>
 				{% endactiveurl %}
                 <div class="uk-navbar-flip uk-hidden-small">
@@ -88,16 +82,6 @@
             <div class="uk-offcanvas-bar">
 				{% activeurl menu="yes" parent_tag="li" css_class="uk-active" %}
                 <ul class="uk-nav uk-nav-offcanvas">
-                    <li>
-                        <a href="{% url 'story_reading_list' %}">
-                            Читальный зал
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'story_list' %}">
-                            Мастерские
-                        </a>
-                    </li>
                     <li>
                         <a href="{% url 'story_create' %}">
                             Новая история

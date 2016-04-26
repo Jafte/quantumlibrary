@@ -19,14 +19,14 @@
     </div>
     {% endif %}
     </div>
-    
+
     <div class="uk-width-1-1">
     {% spaceless %}
-    {% for part in story_parts %}
+    {% for part in story_line.parts.all %}
         <div class="uk-grid uk-grid-small uk-margin-top" data-uk-grid-match>
             <div class="uk-width-1-10 uk-position-relative">
                 <div class="uk-position-top-right">
-                {% if part.parent %}
+                {% if part.story_part.level > 1 %}
                 <div class="uk-text-right">
                     <button class="uk-button uk-button-small">
                         <i class="uk-icon-thumbs-up"></i>
@@ -41,52 +41,43 @@
             </div>
             <div class="uk-width-1-10">
                 <div class="uk-margin-bottom">
-                    {% if part.is_root_node %}
-                    <div class="uk-badge">
-                        <i class="uk-icon-lock"></i>
+                    <div class="uk-button-group uk-margin-small-bottom">
+                        <a
+                            class="uk-button uk-button-mini"
+                            href="{% url 'story_detail_line_part_variants' story_line.pk part.pk %}"
+                            data-uk-modal='{"target":"#modal-story-variants"}'
+                            title="сюжетные линии"
+                        >
+                            <i class="uk-icon-sitemap"></i>
+                            {{ part.get_other_lines_parts.count }}
+                        </a>
+                        <a
+                            class="uk-button uk-button-mini"
+                            href="{% url 'story_detail_line_part_next' story_line.pk part.story_part.pk %}"
+                            title="продолжить сюжет"
+                        >
+                            <i class="uk-icon-plus"></i>
+                        </a>
                     </div>
-                    {% endif %}
-                    {% if part.is_child_node %}
-                    <a 
-                        class="uk-button uk-button-mini uk-button-danger"
-                        href="{% url 'story_part_create_variant' story.pk part.pk %}"
-                        title="новая сюжетная линия" 
-                    >
-                        <i class="uk-icon-code-fork"></i>
-                    </a>
-                    {% endif %}
-                    {% if part.is_child_node %}
-                    <a 
-                        class="uk-button uk-button-mini uk-button-danger"
-                        href="{% url 'story_part_modify_variant' story.pk part.pk %}"
-                        title="предложить версию" 
-                    >
-                        <i class="uk-icon-pencil-square-o"></i>
-                    </a>
-                    {% endif %}
-                    <br/>
-                    {% if part.get_siblings %}
-                    <a 
-                        class="modal-story-variants-show uk-button uk-button-mini uk-button-warning" 
-                        href="{% url 'story_detail_part_variants' story.pk part.pk %}" 
-                        data-uk-modal='{"target":"#modal-story-variants"}'
-                        title="алтернативные варианты" 
-                    >
-                        <i class="uk-icon-sitemap"></i>
-                        {{ part.get_siblings.count }}
-                    </a>
-                    {% endif %}
-                    {% if part.text_block.variants.all %}
-                    <a 
-                        class="modal-story-variants-show uk-button uk-button-mini uk-button-warning" 
-                        href="{% url 'story_detail_part_modifications' story.pk part.pk %}" 
-                        data-uk-modal='{"target":"#modal-story-modifications"}'
-                        title="алтернативные варианты" 
-                    >
-                        <i class="uk-icon-clone"></i>
-                        {{ part.text_block.variants.all.count }}
-                    </a>
-                    {% endif %}
+
+                    <div class="uk-button-group">
+                        <a
+                            class="uk-button uk-button-mini"
+                            href="{% url 'story_detail_line_part_modifications' story_line.pk part.text_block.pk %}"
+                            data-uk-modal='{"target":"#modal-story-modifications"}'
+                            title="варианты текста"
+                        >
+                            <i class="uk-icon-clone"></i>
+                            {{ part.get_other_text_block_variants.count }}
+                        </a>
+                        <a
+                            class="uk-button uk-button-mini"
+                            href="{% url 'story_detail_line_part_modification_add' story_line.pk part.story_part.pk %}"
+                            title="предложить версию текста"
+                        >
+                            <i class="uk-icon-plus"></i>
+                        </a>
+                    </div>
                 </div>
                 <div class="uk-text-muted uk-text-small">
                     написал {% if part.text_block.author %}{{ part.text_block.author }}{% else %}аноним{% endif %}<br/>
@@ -101,9 +92,11 @@
             <div class="uk-push-1-10 uk-width-8-10">
                 <div class="uk-grid">
                     <div class="uk-width-3-5 uk-text-center">
-                        <a class="uk-button uk-width-1-1" href="{% url 'story_part_create_next' story.pk primary_story_line.pk %}">
-                            написать новуя часть
+                        {% with story_line.get_last_part as last_part %}
+                        <a class="uk-button uk-width-1-1" href="{% url 'story_detail_line_part_next' story_line.pk last_part.pk %}">
+                            продолжить
                         </a>
+                        {% endwith %}
                     </div>
                     <div class="uk-width-2-5 uk-text-center">
                         <button class="uk-button uk-button-primary uk-width-1-1">
