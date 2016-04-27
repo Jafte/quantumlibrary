@@ -61,7 +61,7 @@
                         </a>
                         <a
                             class="uk-button uk-button-mini"
-                            href="{% url 'story_detail_line_part_next' story_line.pk part.story_part.pk %}"
+                            href="{% url 'story_detail_line_part_next' story_line.pk part.pk %}"
                             title="продолжить сюжет"
                         >
                             <i class="uk-icon-plus"></i>
@@ -80,7 +80,7 @@
                         </a>
                         <a
                             class="uk-button uk-button-mini"
-                            href="{% url 'story_detail_line_part_modification_add' story_line.pk part.story_part.pk %}"
+                            href="{% url 'story_detail_line_part_modification_add' story_line.pk part.pk %}"
                             title="предложить версию текста"
                         >
                             <i class="uk-icon-plus"></i>

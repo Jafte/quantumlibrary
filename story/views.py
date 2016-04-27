@@ -162,25 +162,34 @@ class DetailStoryLineVariants(JSONResponseMixin, DetailView):
 class CreateStoryPart(FormView):
     form_class = StoryPartForm
     template_name = 'story/story_form.html'
-    view_mode = 'variant'
+    view_mode = 'mod'
 
     def get_context_data(self, **kwargs):
         context = super(CreateStoryPart, self).get_context_data(**kwargs)
 
-        part_pk = self.kwargs.get('step_pk', False)
+        part_pk = self.kwargs.get('part_pk', False)
         line_pk = self.kwargs.get('line_pk', False)
 
         story = get_object_or_404(Story, pk = story_pk)
-        part = get_object_or_404(StoryPart.objects.filter(story=story), pk = part_pk)
+        story_line_part = get_object_or_404(StoryLinePart, pk = part_pk)
 
-        if self.view_mode == 'variant' or self.view_mode == 'modify':
-            context['current_part'] = part
-            context['parent_part'] = part.parent
-        else:
-            context['current_part'] = False
-            context['parent_part'] = part
+        if story_line_part.story_line.story != story:
+            raise Http404
+
+        switch self.view_mode:
+            case "next":
+                context['current_part'] = False
+                context['parent_part'] = story_line_part.story_part
+                break
+            case "variant":
+            case "mod":
+            default:
+                context['current_part'] = story_line_part.story_part
+                context['parent_part'] = story_line_part.story_part.parent
+                break
 
         context['view_mode'] = self.view_mode
+        context['story_line_part'] = story_line_part
         context['story'] = story
 
         return context
@@ -190,65 +199,72 @@ class CreateStoryPart(FormView):
         story = context['story']
         parent_part = context['parent_part']
         current_part = context['current_part']
+        story_line_part = context['story_line_part']
 
-        if self.view_mode == "modify":
-            diff_obj = diff_match_patch.diff_match_patch()
+        switch self.view_mode:
+            case "next":
+            case "variant":
+                part = StoryPart(
+                        parent = parent_part,
+                        story = story
+                    )
+                part.save()
 
-            text_block = current_part.text_block
-
-            text_block_version = TextBlockVersion(
-                text = form.cleaned_data['text'],
-                text_block = text_block
-            )
-
-            if self.request.user.is_authenticated():
-                text_block_version.author = self.request.user
-            else:
-                anon_id = self.request.session.get('anon_id', False)
-                if not anon_id:
-                    anon_id = hex(random.getrandbits(128))[2:-1]
-                    self.request.session['anon_id'] = anon_id
-
-                text_block_version.session_key = anon_id
-
-            diffs = diff_obj.diff_main(text_block.text, text_block_version.text)
-            diff_obj.diff_cleanupSemantic(diffs)
-            text_block_version.diff = diff_obj.diff_toDelta(diffs)
-
-            text_block_version.save()
-
-            part = current_part
-
-        else:
-            text_block = TextBlock(
-                text=form.cleaned_data['text'],
-            )
-
-            part = StoryPart(
-                    parent = parent_part,
+                text_block = TextBlock(
+                    text=form.cleaned_data['text'],
+                    author = self.request.user,
+                    story = story,
+                    story_part = part,
                 )
 
-            if self.request.user.is_authenticated():
-                text_block.author = self.request.user
-            else:
-                anon_id = self.request.session.get('anon_id', False)
-                if not anon_id:
-                    anon_id = hex(random.getrandbits(128))[2:-1]
-                    self.request.session['anon_id'] = anon_id
+                text_block.save()
 
-                text_block.session_key = anon_id
+                story_line = story_line_part.story_line
+                new_part = StoryLinePart(
+                            story_line = story_line,
+                            story_part = part.story_part,
+                            text_block = text_block
+                        )
+                new_part.save()
 
-            text_block.story = story
-            text_block.save()
+                break
+            case "mod":
+            default:
+                diff_obj = diff_match_patch.diff_match_patch()
 
-            part.story = story
-            part.text_block = text_block
-            part.save()
+                text_block_original = current_part.text_block
 
-            parent_part.update_primary_story_line(part)
+                text_block = TextBlock(
+                    text = form.cleaned_data['text'],
+                    parent = text_block_original,
+                    author = self.request.user,
+                    story_part = current_part,
+                )
 
-            if (parent_part == story.primary_story_line):
-                story.primary_story_line = part
-                story.save()
+                diffs = diff_obj.diff_main(text_block_original.text, text_block.text)
+                diff_obj.diff_cleanupSemantic(diffs)
 
-        return HttpResponseRedirect(part.get_absolute_url())
+                text_block.diff = diff_obj.diff_toDelta(diffs)
+
+                text_block.save()
+
+                original_story_line = story_line_part.story_line
+                story_line = StoryLine(story=story)
+                story_line.save()
+
+                for part in original_story_line.parts.all():
+                    new_part = StoryLinePart(
+                            story_line=story_line,
+                            story_part=part.story_part,
+                        )
+
+                    if part.story_part == current_part:
+                        new_part.text_block = text_block
+                    else:
+                        new_part.text_block = part.text_block
+
+                    new_part.save()
+
+                break
+
+        return HttpResponseRedirect(story_line.get_absolute_url())
