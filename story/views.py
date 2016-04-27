@@ -1,4 +1,4 @@
-import random, diff_match_patch, ipdb
+import diff_match_patch
 from django.http import HttpResponseRedirect, Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
