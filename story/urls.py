@@ -4,8 +4,8 @@ from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
-    url(r"^l(?P<line_pk>\d+)/p(?P<line>\d+)/modifications/add/$",    views.DetailStoryLineVariants.as_view(),                name="story_detail_line_part_modification_add"),
-    url(r"^l(?P<line_pk>\d+)/p(?P<line>\d+)/modifications/$",        views.DetailStoryLineVariants.as_view(),                name="story_detail_line_part_modifications"),
+    url(r"^l(?P<line_pk>\d+)/p(?P<line>\d+)/modifications/add/$",       views.DetailStoryLineVariants.as_view(),                name="story_detail_line_part_modification_add"),
+    url(r"^l(?P<line_pk>\d+)/p(?P<line>\d+)/modifications/$",           views.DetailStoryLineVariants.as_view(),                name="story_detail_line_part_modifications"),
 
     url(r"^l(?P<line_pk>\d+)/b(?P<line>\d+)/variants/add/$",            views.CreateStoryPart.as_view(view_mode="next_step"),   name="story_detail_line_part_next"),
     url(r"^l(?P<line_pk>\d+)/b(?P<line>\d+)/variants/$",                views.DetailStoryLineVariants.as_view(),                name="story_detail_line_part_variants"),

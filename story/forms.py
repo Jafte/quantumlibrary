@@ -6,5 +6,9 @@ class StoryForm(forms.Form):
     anotation = forms.CharField(label=_('Description'), required=False, widget=forms.Textarea(attrs={'rows':5, 'cols':40}))
     text = forms.CharField(label=_('First part'), widget=forms.Textarea(attrs={'rows':10, 'cols':40}))
 
+class StoryEditForm(forms.Form):
+    title = forms.CharField(label=_('Title'), max_length=200)
+    anotation = forms.CharField(label=_('Description'), required=False, widget=forms.Textarea(attrs={'rows':5, 'cols':40}))
+
 class StoryPartForm(forms.Form):
     text = forms.CharField(label=_('Text'), widget=forms.Textarea(attrs={'rows':15, 'cols':40}))

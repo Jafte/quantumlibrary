@@ -50,6 +50,7 @@ INSTALLED_APPS = (
     'django_activeurl',
     'post_office',
     'widget_tweaks',
+    'mptt',
 
     'story',
 )

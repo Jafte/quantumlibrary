@@ -5,8 +5,8 @@
 {% block title %}Список историй{% endblock %}
 
 {% block content %}
+{% for story in story_list %}
 <div class="uk-grid">
-    {% for story in story_list %}
     <div class="uk-width-1-10 uk-position-relative">
         <div class="uk-position-bottom-right">
             <div class="uk-text-right">
@@ -31,6 +31,7 @@
         {{ story.created|naturaltime }}
     </div>
     </div>
-    {% endfor %}
 </div>
+<hr class="uk-grid-divider">
+{% endfor %}
 {% endblock %}

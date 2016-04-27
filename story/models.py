@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
 
+from mptt.models import MPTTModel, TreeForeignKey
+
 @python_2_unicode_compatible
 class Story(models.Model):
     creator = models.ForeignKey(User, verbose_name=_('creator'), related_name="my_stories", blank=True, null=True)
@@ -34,9 +36,9 @@ class Story(models.Model):
 
 
 @python_2_unicode_compatible
-class StoryPart(models.Model):
+class StoryPart(MPTTModel):
     story = models.ForeignKey(Story, verbose_name=_('story'), related_name="+")
-    level = models.IntegerField(verbose_name=_('level'))
+    parent = TreeForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     is_deleted = models.BooleanField(verbose_name=_('is deleted'), default=False)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
@@ -105,12 +107,12 @@ class StoryLinePart(models.Model):
         return ""
 
     def get_all_lines_part(self):
-        story = self.story_line.story
         story_part = self.story_part
-        return StoryPart.objects.filter(story=story, level=story_part.level)
+        return story_part.get_siblings(include_self=True)
 
     def get_other_lines_parts(self):
-        return self.get_all_lines_part().exclude(pk=self.story_part.pk)
+        story_part = self.story_part
+        return story_part.get_siblings(include_self=False)
 
     def get_all_text_block_variants(self):
         return self.story_part.text_blocks.all()
