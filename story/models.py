@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
+from django.db.models import Max, Count
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -100,22 +101,24 @@ class StoryLinePart(models.Model):
         ordering = ['story_line', 'story_part__level']
 
     def __str__(self):
-        return "#%s %s" % (self.pk, self.story_line)
+        return "#%s line %s part %s text %s" % (self.pk, self.story_line.pk, self.story_part.pk, self.text_block.pk)
 
     def get_absolute_url(self):
         #return reverse('story_detail', args=[str(self.pk)])
         return ""
 
     def get_all_lines_part(self):
-        story_part = self.story_part
-        return story_part.get_siblings(include_self=True)
+        siblings = self.story_part.get_siblings(include_self=True).values('pk')
+        return StoryLinePart.objects.filter(story_part__in = siblings)
 
     def get_other_lines_parts(self):
-        story_part = self.story_part
-        return story_part.get_siblings(include_self=False)
+        siblings = self.story_part.get_siblings(include_self=False).values('pk')
+        return StoryLinePart.objects.filter(story_part__in=siblings)
 
     def get_all_text_block_variants(self):
-        return self.story_part.text_blocks.all()
+        return StoryLinePart.objects.filter(story_part = self.story_part)\
+            .distinct('text_block__pk')
+
 
     def get_other_text_block_variants(self):
-        return self.get_all_text_block_variants().exclude(pk=self.text_block.pk)
+        return self.get_all_text_block_variants().exclude(text_block = self.text_block)

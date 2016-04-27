@@ -20,13 +20,13 @@
     {% endif %}
     </div>
 
-    <div class="uk-width-1-1">
+    <div class="uk-width-1-1 uk-margin-top">
     {% spaceless %}
     {% for part in story_line.parts.all %}
-        <div class="uk-grid uk-grid-small uk-margin-top" data-uk-grid-match>
+        <div class="uk-grid uk-grid-small" data-uk-grid-match>
             <div class="uk-width-1-10 uk-position-relative">
                 <div class="uk-position-top-right">
-                {% if part.story_part.level > 1 %}
+                {% if not part.story_part.is_root_node %}
                 <div class="uk-text-right">
                     <button class="uk-button uk-button-small">
                         <i class="uk-icon-thumbs-up"></i>
@@ -36,10 +36,10 @@
                 {% endif %}
                 </div>
             </div>
-            <div class="uk-width-8-10">
+            <div class="uk-width-7-10">
                 {{ part.text_block.text|linebreaks }}
             </div>
-            <div class="uk-width-1-10">
+            <div class="uk-width-2-10">
                 <div class="uk-margin-small-bottom">
                     {% if part.story_part.is_root_node %}
 
@@ -61,17 +61,19 @@
                         </a>
                         <a
                             class="uk-button uk-button-mini"
-                            href="{% url 'story_detail_line_part_next' story_line.pk part.pk %}"
-                            title="продолжить сюжет"
+                            href="{% url 'story_detail_line_part_variant_add' story_line.pk part.pk %}"
+                            title="изменить сюжет"
                         >
                             <i class="uk-icon-plus"></i>
                         </a>
                     </div>
 
+                    <div class="clearfix"></div>
+
                     <div class="uk-button-group">
                         <a
-                            class="uk-button uk-button-mini"
-                            href="{% url 'story_detail_line_part_modifications' story_line.pk part.text_block.pk %}"
+                            class="uk-button uk-button-mini modal-story-modifications-show"
+                            href="{% url 'story_detail_line_part_modifications' story_line.pk part.pk %}"
                             data-uk-modal='{"target":"#modal-story-modifications"}'
                             title="варианты текста"
                         >
@@ -81,7 +83,7 @@
                         <a
                             class="uk-button uk-button-mini"
                             href="{% url 'story_detail_line_part_modification_add' story_line.pk part.pk %}"
-                            title="предложить версию текста"
+                            title="изменить текст"
                         >
                             <i class="uk-icon-plus"></i>
                         </a>
@@ -94,6 +96,7 @@
                 </div>
             </div>
         </div>
+        <hr class="uk-grid-divider">
         {% empty %}
             <p class="uk-panel-title">Тлен и пустота в твоей истории :(</p>
         {% endfor %}

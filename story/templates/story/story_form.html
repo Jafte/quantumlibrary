@@ -20,17 +20,18 @@
     <div class="uk-grid">
 		<div class="uk-width-medium-1-3 uk-push-2-3">
 			<div class="uk-panel uk-panel-box uk-panel-box-primary">
-	            {% if story and current_part %}
+	            {% if story %}
+                    {% if view_mode == "variant" or view_mode == "next" %}
+                <h3 class="uk-panel-title">
+                    При продолжении истории<br>
+                    следует помнить
+                </h3>
+                    {% else %}
                 <h3 class="uk-panel-title">
                     При создании альтернатив<br>
                     следует помнить
                 </h3>
-                {% elif story and parent_part %}
-	            <h3 class="uk-panel-title">
-                    При продолжении истории<br>
-                    следует помнить
-                </h3>
-	            
+                    {% endif%}
                 {% else %}
 	            <h3 class="uk-panel-title">
                     При создании новой истории<br>
@@ -59,15 +60,15 @@
             </div>
         </div>
         <div class="uk-width-medium-2-3 uk-pull-1-3">
-            {% if parent_part and view_mode == "variant" %}
+            {% if view_mode == "variant" or view_mode == "next" %}
             <div class="uk-panel uk-panel-box uk-margin-bottom">
                 <h5 class="uk-panel-title">Предыдущий эпизоод:</h5>
-                <p>{{ parent_part.text_block.text }}</p>
+                <p>{{ story_line_part.text_block.text|linebreaks }}</p>
             </div>
-            {% elif current_part and view_mode == "modify" %}
+            {% elif view_mode == "mod" %}
             <div class="uk-panel uk-panel-box uk-margin-bottom  uk-margin-top">
                 <h5 class="uk-panel-title">Вы пишите вариант для блока:</h5>
-                <p>{{ current_part.text_block.text }}</p>
+                <p>{{ story_line_part.text_block.text|linebreaks }}</p>
             </div>
             {% endif %}
             <form action="." method="post" class="uk-form uk-form-stacked">
@@ -92,7 +93,7 @@
                     </button>
                 </div>
             </form>
-            {% if current_part and view_mode == "variant" %}
+            {% if view_mode == "variant" %}
             <div class="uk-panel uk-panel-box uk-margin-bottom  uk-margin-top">
                 <h5 class="uk-panel-title">Вы пишите новый сюжет относительно эпизода:</h5>
                 <p>{{ current_part.text_block.text }}</p>

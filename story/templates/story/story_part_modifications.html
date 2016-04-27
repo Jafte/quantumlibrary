@@ -8,26 +8,30 @@
 <article class="uk-article">
     <h1 class="uk-article-title">{{ story.title }}</h1>
 
+    {{story_line_part}}
+
+    {{part_variants}}
+
     {% for part in part_variants %}
-        {% if part == part_original %}
+        {% if part == story_line_part %}
         <div class="uk-panel uk-panel-box uk-margin-bottom" id="part-{{ part.pk }}">
         {% else %}
-        <a class="uk-panel uk-panel-hover uk-margin-bottom" id="part-{{ part.pk }}" href="{% url 'story_detail_by_part' story.pk part.pk %}">
+
         {% endif %}
             <div class="uk-panel-badge">
                 {% if part.author == user %}
                     <div class="uk-badge uk-badge-success">вы автор эпизода</div>
                 {% endif %}
 
-                {% if part == part_original %}
+                {% if part == story_line_part %}
                     <div class="uk-badge uk-badge-success">
                         <i class="uk-icon-check"></i>
                         сюжетный эпизод
                     </div>
                 {% endif %}
             </div>
-            <p>{{ part.text_block.text }}</p>
-        {% if part == part_original %}
+            <p>{{ part.text_block.text|linebreaks }}</p>
+        {% if part == story_line_part %}
         </div>
         {% else %}
         </a>
@@ -39,7 +43,7 @@
     {% endfor %}
 </article>
 <hr/>
-<a href="{% url 'story_part_create' story.pk part_original.pk %}" class="uk-button">
+
     <i class="uk-icon-code-fork"></i>
     предложить свою версию
 </a>
