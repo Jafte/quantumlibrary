@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import python_2_unicode_compatible
-from django.db.models import Max, Count
 
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -30,7 +29,7 @@ class Story(models.Model):
     def get_primary_story_line(self):
         try:
             story_line = self.story_lines.get(is_primary=True)
-        except (Model.DoesNotExist, Model.MultipleObjectsReturned) as e:
+        except (Story.DoesNotExist, Story.MultipleObjectsReturned) as e:
             story_line = self.story_lines.all().first()
 
         return story_line
@@ -94,6 +93,7 @@ class StoryLinePart(models.Model):
     story_line = models.ForeignKey(StoryLine, verbose_name=_('story line'), related_name="parts")
     story_part = models.ForeignKey(StoryPart, verbose_name=_('story part'), related_name="line_parts")
     text_block = models.ForeignKey(TextBlock, verbose_name=_('text block'), related_name="line_parts")
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     created = models.DateTimeField(verbose_name=_('created'), auto_now_add=True)
 
     class Meta:
@@ -116,8 +116,11 @@ class StoryLinePart(models.Model):
         return StoryLinePart.objects.filter(story_part__in=siblings)
 
     def get_all_text_block_variants(self):
-        return StoryLinePart.objects.filter(story_part = self.story_part)\
-            .distinct('text_block__pk')
+        list = StoryLinePart.objects.all()
+        if self.parent:
+            return list.filter( models.Q(parent = self.parent) | models.Q(pk = self.parent.pk))
+        else:
+            return list.filter(parent=self.pk)
 
 
     def get_other_text_block_variants(self):

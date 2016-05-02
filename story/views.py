@@ -272,17 +272,16 @@ class CreateStoryPart(FormView):
             story_line.save()
 
             for part in original_story_line.parts.all():
-                new_part = StoryLinePart(
-                    story_line=story_line,
-                    story_part=part.story_part,
-                )
+                part.pk = None
+                part.parent = None
+                part.story_line = story_line
 
                 if part.story_part == story_line_part.story_part:
-                    new_part.text_block = text_block
-                else:
-                    new_part.text_block = part.text_block
+                    part.text_block = text_block
+                    part.parent = story_line_part.parent if  story_line_part.parent  else story_line_part
 
-                new_part.save()
+                part.save()
+
         else:
             if view_mode == "next":
                 parent = story_line_part.story_part
@@ -319,18 +318,17 @@ class CreateStoryPart(FormView):
                 story_line.save()
 
                 for part_line in story_line.parts.all():
-                    new_part = StoryLinePart(
-                        story_line = story_line,
-                    )
+                    part_line.pk = None
+                    part_line.parent = None
+                    part_line.story_line = story_line
 
                     if part_line.story_part == parent:
-                        new_part.text_block = text_block
-                        new_part.story_part = story_part
-                        new_part.save()
+                        part_line.text_block = text_block
+                        part_line.story_part = story_part
+
+                    part_line.save()
+
+                    if part_line.story_part == parent:
                         break
-                    else:
-                        new_part.text_block = part_line.text_block
-                        new_part.story_part = part_line.story_part
-                        new_part.save()
 
         return HttpResponseRedirect(story_line.get_absolute_url())
